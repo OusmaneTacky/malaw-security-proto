@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Heatmap - Malaw Security</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <style>
+    html,body { height:100%; margin:0; font-family: "Poppins",sans-serif; background:#eef6fb; }
+    #map { width:100%; height:100vh; }
+
+    /* chaque label centré sur la région */
+    .region-label {
+      background: rgba(255,255,255,0.9);
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      color: #222;
+      text-align:center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      line-height:1;
+    }
+
+    .legend {
+      background: white;
+      padding: 10px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+      font-size: 13px;
+      color: #222;
+    }
+
+    .legend .bar {
+      height: 10px;
+      border-radius: 4px;
+      margin: 6px 0 8px 0;
+      background: linear-gradient(90deg, hsl(120,75%,45%), hsl(60,75%,45%), hsl(0,75%,45%));
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script>
+  /**************************************************************************
+   * Heatmap fonctionnelle - lit les alertes depuis localStorage et colore
+   * chaque région du Sénégal (embedded GeoJSON simplifié).
+   *
+   * IMPORTANT:
+   * - Les signalements doivent contenir le champ "localisation" qui inclut
+   *   le nom de la région (ex: "Région de Kaolack" ou "Kaolack").
+   * - Si ta clé localStorage "alertes" n'existe pas, la carte montre 0 partout.
+   **************************************************************************/
+
+  // 1) Liste canonique des régions (format exact utilisé dans les propriétés)
+  const REGIONS = ["Dakar","Thiès","Kaolack","Ziguinchor","Saint-Louis","Louga",
+                   "Fatick","Kaffrine","Tambacounda","Kédougou","Matam","Sédhiou","Kolda","Diourbel"];
+
+  // 2) Récupérer alertes depuis localStorage
+  const alertes = JSON.parse(localStorage.getItem("alertes") || "[]");
+
+  // 3) Normalisation utile pour rechercher le nom de région dans la chaîne localisation
+  function normalize(s) {
+    if (!s) return "";
+    return s.toString()
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g,"") // retire accents
+      .replace(/region|région|dept|dépt|province|ville/g,"")
+      .replace(/[^a-z0-9\s-]/g,"")
+      .trim();
+  }
+
+  // 4) Compter par région (initialise 0)
+  const counts = {};
+  REGIONS.forEach(r => counts[r] = 0);
+
+  alertes.forEach(a => {
+    const loc = a.localisation || "";
+    const nloc = normalize(loc);
+    // trouver la première région canonique présente dans la chaîne
+    for (const r of REGIONS) {
+      const nr = normalize(r);
+      if (nr && (nloc.includes(nr) || nloc === nr)) {
+        counts[r] = (counts[r] || 0) + 1;
+        return;
+      }
+    }
+    // si rien trouvé, on ignore (ou tu peux stocker dans "Non précisée")
+  });
+
+  // 5) Calcul du max (pour échelle)
+  const max = Math.max(...Object.values(counts), 1);
+
+  // 6) fonction couleur (vert -> jaune -> rouge) via HSL
+  function colorFor(value) {
+    if (!value || max === 0) return "hsl(120,60%,45%)"; // vert si 0
+    const ratio = value / max; // 0..1
+    const hue = (1 - ratio) * 120; // 120 (green) -> 0 (red)
+    return `hsl(${hue},75%,45%)`;
+  }
+
+  // 7) Carte Leaflet
+  const map = L.map("map", { zoomControl: true }).setView([14.5, -14.5], 6.3);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap",
+    maxZoom: 10,
+    minZoom: 5
+  }).addTo(map);
+
+  // 8) GeoJSON SIMPLIFIÉ (polygones approximatifs, mais suffisants pour remplissage)
+  // Note: coordonnées GeoJSON = [lon, lat]
+  const regionsGeoJSON = {
+    "type":"FeatureCollection",
+    "features":[
+      {"type":"Feature","properties":{"name":"Dakar"},"geometry":{"type":"Polygon","coordinates":[[[-17.6,14.9],[-17.2,14.9],[-17.2,14.6],[-17.6,14.6],[-17.6,14.9]]]}},
+      {"type":"Feature","properties":{"name":"Thiès"},"geometry":{"type":"Polygon","coordinates":[[[-17.6,15.0],[-16.8,15.0],[-16.8,14.3],[-17.6,14.3],[-17.6,15.0]]]}},
+      {"type":"Feature","properties":{"name":"Diourbel"},"geometry":{"type":"Polygon","coordinates":[[[-16.9,15.0],[-16.3,15.0],[-16.3,14.5],[-16.9,14.5],[-16.9,15.0]]]}},
+      {"type":"Feature","properties":{"name":"Kaolack"},"geometry":{"type":"Polygon","coordinates":[[[-16.5,14.6],[-15.9,14.6],[-15.9,13.9],[-16.5,13.9],[-16.5,14.6]]]}},
+      {"type":"Feature","properties":{"name":"Fatick"},"geometry":{"type":"Polygon","coordinates":[[[-16.4,14.3],[-15.8,14.3],[-15.8,13.8],[-16.4,13.8],[-16.4,14.3]]]}},
+      {"type":"Feature","properties":{"name":"Kaffrine"},"geometry":{"type":"Polygon","coordinates":[[[-15.9,14.6],[-15.2,14.6],[-15.2,13.9],[-15.9,13.9],[-15.9,14.6]]]}},
+      {"type":"Feature","properties":{"name":"Louga"},"geometry":{"type":"Polygon","coordinates":[[[-16.4,15.8],[-15.6,15.8],[-15.6,15.1],[-16.4,15.1],[-16.4,15.8]]]}},
+      {"type":"Feature","properties":{"name":"Saint-Louis"},"geometry":{"type":"Polygon","coordinates":[[[-16.8,16.3],[-15.6,16.3],[-15.6,15.6],[-16.8,15.6],[-16.8,16.3]]]}},
+      {"type":"Feature","properties":{"name":"Matam"},"geometry":{"type":"Polygon","coordinates":[[[-14.6,15.9],[-13.2,15.9],[-13.2,14.9],[-14.6,14.9],[-14.6,15.9]]]}},
+      {"type":"Feature","properties":{"name":"Tambacounda"},"geometry":{"type":"Polygon","coordinates":[[[-14.6,14.6],[-13.0,14.6],[-13.0,13.2],[-14.6,13.2],[-14.6,14.6]]]}},
+      {"type":"Feature","properties":{"name":"Kedougou"},"geometry":{"type":"Polygon","coordinates":[[[-13.4,13.6],[-12.2,13.6],[-12.2,12.3],[-13.4,12.3],[-13.4,13.6]]]}},
+      {"type":"Feature","properties":{"name":"Kolda"},"geometry":{"type":"Polygon","coordinates":[[[-15.9,13.6],[-14.8,13.6],[-14.8,12.8],[-15.9,12.8],[-15.9,13.6]]]}},
+      {"type":"Feature","properties":{"name":"Sedhiou"},"geometry":{"type":"Polygon","coordinates":[[[-16.4,13.4],[-15.6,13.4],[-15.6,12.9],[-16.4,12.9],[-16.4,13.4]]]}},
+      {"type":"Feature","properties":{"name":"Ziguinchor"},"geometry":{"type":"Polygon","coordinates":[[[-16.9,13.6],[-16.3,13.6],[-16.3,12.8],[-16.9,12.8],[-16.9,13.6]]]}}
+    ]
+  };
+
+  // 9) ajouter le layer GeoJSON et les labels
+  const labels = []; // on garde les markers créés pour pouvoir les supprimer si besoin
+  const geoLayer = L.geoJSON(regionsGeoJSON, {
+    style: feature => {
+      const name = feature.properties.name;
+      const value = counts[name] || 0;
+      return {
+        fillColor: colorFor(value),
+        color: "#444",
+        weight: 1,
+        fillOpacity: 0.8
+      };
+    },
+    onEachFeature: (feature, layer) => {
+      const name = feature.properties.name;
+      const value = counts[name] || 0;
+      layer.bindPopup(`<strong>${name}</strong><br>${value} alerte${value>1?"s":""}`);
+
+      // centre du polygone -> label avec nombre
+      const center = layer.getBounds().getCenter();
+      const label = L.marker(center, {
+        interactive: false,
+        icon: L.divIcon({
+          className: "region-label",
+          html: `${name}<br><span style="font-size:13px">${value}</span>`,
+          iconSize: [100, 36]
+        })
+      }).addTo(map);
+      labels.push(label);
+
+      layer.on({
+        mouseover: e => {
+          e.target.setStyle({ weight: 3, color: "#000" });
+          layer.openPopup();
+        },
+        mouseout: e => {
+          geoLayer.resetStyle(e.target);
+          layer.closePopup();
+        }
+      });
+    }
+  }).addTo(map);
+
+// 10) Centrage manuel optimal sur le Sénégal
+const senegalCenter = [14.5, -14.5]; // latitude, longitude
+const optimalZoom = 7.1; // zoom optimal (ajusté de +5% environ)
+map.setView(senegalCenter, optimalZoom);
+
+
+
+  // Optionnel : empêcher l'utilisateur de trop sortir (commenter si tu veux liberté totale)
+  // map.setMaxBounds(geoLayer.getBounds().pad(0.5));
+
+  // 11) Légende (avec info max)
+  const legend = L.control({position:'bottomright'});
+  legend.onAdd = function() {
+    const div = L.DomUtil.create('div','legend');
+    div.innerHTML = `<div style="font-weight:700;margin-bottom:6px">Intensité des alertes</div>
+      <div class="bar" style="width:160px"></div>
+      <div style="font-size:12px;color:#555">0 — ${max} alertes (échelle)</div>`;
+    return div;
+  };
+  legend.addTo(map);
+
+  // debug dans la console
+  console.log("Alertes lues:", alertes.length, "Counts:", counts);
+
+  </script>
+</body>
+</html>

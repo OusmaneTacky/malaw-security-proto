@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Malaw Security - Quiz de Sensibilisation</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="quiz.css" />
+</head>
+
+<body>
+  <div class="page-bg">
+    <div class="container">
+      <div class="phone-frame" role="application" aria-label="Interface quiz cybersécurité">
+
+        <div class="logo-wrapper">
+          <img src="logo.png" alt="Malaw Security Logo" class="logo-image">
+        </div>
+
+        <header class="phone-header">
+          <h2>Quiz de Sensibilisation</h2>
+        </header>
+
+        <main class="phone-body" id="quiz-body">
+          <p class="subtitle">Teste ta vigilance face aux cybermenaces 💻</p>
+
+          <div id="quiz-container">
+            <div id="question-container" class="question"></div>
+            <div id="options-container" class="options"></div>
+            <button id="next-btn" class="btn-green" onclick="nextQuestion()">Suivant</button>
+          </div>
+
+          <div id="result-container" class="result-section" style="display:none;">
+            <h3>📊 Ton rapport de vigilance</h3>
+            <p id="score-text"></p>
+            <div id="mistakes"></div>
+
+            <div class="tips">
+              <h4>💡 Conseils pour éviter les scams</h4>
+              <ul>
+                <li>⚠️ Ne clique jamais sur un lien suspect ou inconnu.</li>
+                <li>📞 Vérifie toujours le numéro ou l’expéditeur avant d’agir.</li>
+                <li>🏛️ Les institutions ne demandent jamais d’argent ou de code par SMS.</li>
+                <li>🔒 Garde tes données personnelles privées.</li>
+                <li>🧾 Signale les messages suspects sur Malaw Security.</li>
+              </ul>
+            </div>
+
+            <button class="btn-green" onclick="restartQuiz()">Refaire le quiz 🔁</button>
+          </div>
+        </main>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="quiz.js"></script>
+</body>
+</html>

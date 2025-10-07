@@ -1,0 +1,92 @@
+[
+  {
+    "date": "08/10/2025 14:32:10",
+    "localisation": "Région de Kaolack",
+    "description": "Message promettant gain financier via Wave avec lien malveillant.",
+    "categorie": "Phishing",
+    "statut": "Nouveau",
+    "anonyme": true,
+    "image": null
+  },
+  {
+    "date": "07/10/2025 09:15:42",
+    "localisation": "Région de Dakar",
+    "description": "Demande de virement par faux support client (arnaque bancaire).",
+    "categorie": "Escroquerie",
+    "statut": "En cours",
+    "anonyme": false,
+    "image": "screenshot_transfer.jpg"
+  },
+  {
+    "date": "06/10/2025 21:05:03",
+    "localisation": "Région de Thiès",
+    "description": "Tentative d'accès non autorisé à un routeur d'entreprise.",
+    "categorie": "Intrusion",
+    "statut": "Nouveau",
+    "anonyme": true,
+    "image": null
+  },
+  {
+    "date": "05/10/2025 17:48:20",
+    "localisation": "Région de Ziguinchor",
+    "description": "Rançongiciel chiffrant des fichiers sur poste de travail.",
+    "categorie": "Rançongiciel",
+    "statut": "En cours",
+    "anonyme": false,
+    "image": "ransom_note.png"
+  },
+  {
+    "date": "04/10/2025 11:12:55",
+    "localisation": "Région de Saint-Louis",
+    "description": "Mise en place d'un site clone pour vol de données de connexion.",
+    "categorie": "Vol de données",
+    "statut": "Nouveau",
+    "anonyme": true,
+    "image": null
+  },
+  {
+    "date": "03/10/2025 08:30:10",
+    "localisation": "Région de Diourbel",
+    "description": "SMS massif contenant un lien malveillant redirigeant vers malware.",
+    "categorie": "Spam SMS",
+    "statut": "Résolu",
+    "anonyme": false,
+    "image": null
+  },
+  {
+    "date": "02/10/2025 19:44:01",
+    "localisation": "Région de Kolda",
+    "description": "Tentative de SIM-swap signalée par perte d'accès au numéro.",
+    "categorie": "SIM swap",
+    "statut": "En cours",
+    "anonyme": true,
+    "image": null
+  },
+  {
+    "date": "01/10/2025 16:05:37",
+    "localisation": "Région de Tambacounda",
+    "description": "Campagne d'appels (vishing) se faisant passer pour la banque.",
+    "categorie": "Vishing",
+    "statut": "Nouveau",
+    "anonyme": false,
+    "image": null
+  },
+  {
+    "date": "28/09/2025 13:22:44",
+    "localisation": "Région de Louga",
+    "description": "Déploiement d'un botnet / trafic suspect sortant depuis un serveur local.",
+    "categorie": "Botnet / Malware",
+    "statut": "En cours",
+    "anonyme": false,
+    "image": "network_log.png"
+  },
+  {
+    "date": "27/09/2025 10:55:02",
+    "localisation": "Région de Fatick",
+    "description": "Arnaque par fausse livraison (faux livreur demandant paiement préalable).",
+    "categorie": "Fraude livraison",
+    "statut": "Nouveau",
+    "anonyme": true,
+    "image": null
+  }
+]

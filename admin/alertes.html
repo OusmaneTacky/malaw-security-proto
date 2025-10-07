@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Alertes - Malaw Security</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body.alertes-page {
+      background-color: #001b2e;
+      color: white;
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .page-content {
+      margin-top: 40px;
+      width: 90%;
+      max-width: 1000px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #b8d9ff;
+      font-family: "Orbitron", sans-serif;
+      margin-bottom: 30px;
+    }
+
+    .alert-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    .alert-table th, .alert-table td {
+      padding: 14px 16px;
+      text-align: left;
+    }
+
+    .alert-table thead {
+      background: rgba(0, 50, 80, 0.8);
+    }
+
+    .alert-table tbody tr:nth-child(even) {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .status.new {
+      background: #2196f3;
+    }
+
+    .status.pending {
+      background: #ff9800;
+    }
+
+    .status.resolved {
+      background: #4caf50;
+    }
+  </style>
+</head>
+<body class="alertes-page">
+  <div class="page-content">
+    <h2>🚨 Alertes récentes</h2>
+    <table class="alert-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Localisation</th>
+          <th>Description</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody id="alertesBody">
+        <!-- Les alertes locales seront ajoutées ici -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const tbody = document.getElementById("alertesBody");
+    const alertes = JSON.parse(localStorage.getItem("alertes") || "[]");
+
+    // Exemples par défaut (si aucune alerte enregistrée)
+    const exemples = [
+      { date: "07/10/2025", localisation: "Région de Dakar", description: "Faux message Orange Money", statut: "En cours" },
+      { date: "06/10/2025", localisation: "Région de Thiès", description: "Campagne phishing “iPhone 17”", statut: "Résolu" },
+      { date: "05/10/2025", localisation: "Région de Kaolack", description: "Arnaque sur livraison Wave", statut: "Nouveau" }
+    ];
+
+    const allAlertes = [...alertes, ...exemples]; // nouvelles d’abord
+
+    allAlertes.forEach(a => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${a.date}</td>
+        <td>${a.localisation}</td>
+        <td>${a.description}</td>
+        <td><span class="status ${getStatusClass(a.statut)}">${a.statut}</span></td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    function getStatusClass(statut) {
+      switch (statut.toLowerCase()) {
+        case "en cours": return "pending";
+        case "résolu": return "resolved";
+        case "nouveau": return "new";
+        default: return "new";
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,130 +1,146 @@
-// ⚙️ Nécessite TensorFlow.js
-// <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+// script.js - Scanner SMS -> crée alertes dans localStorage
 
-const SUSPICIOUS_KEYWORDS = [
-  'gagne', 'gagner', 'gagnez', 'prix', 'félicitations', 'cadeau',
-  'urgent', 'clique', 'cliquez', 'lien', 'gratuit', 'offre', 'promotion',
-  '100k', '100000', 'fcfa', 'f cfa', 'orange money', 'wave', 'cash', 'virement',
-  'votre compte', 'code', 'verifiez', 'vérifiez', 'envoyer', 'recevez'
+// Configuration simple (mots-clés -> catégorie, poids)
+const KEYWORDS = [
+  { words: ["gagnez", "gagner", "gagné", "lot", "concours", "tirage"], category: "Fraude concours", weight: 0.8 },
+  { words: ["wave", "orange money", "om", "mobile money", "virement", "transfert"], category: "Escroquerie", weight: 0.9 },
+  { words: ["cliquez ici", "lien", "http", "https", "bit.ly", "shortener"], category: "Phishing", weight: 0.95 },
+  { words: ["mot de passe", "mdp", "identifiant", "login"], category: "Vol de données", weight: 0.9 },
+  { words: ["livraison", "livreur", "paiement à la livraison", "paiement à réception"], category: "Fraude livraison", weight: 0.7 },
+  { words: ["numero bloque", "vérifier votre compte", "suspendu", "compte suspendu"], category: "Vishing / phishing", weight: 0.9 },
+  { words: ["code", "otp", "mot de passe à usage unique", "one-time password"], category: "SIM swap / récupération", weight: 0.85 },
+  { words: ["virus", "malware", "télécharger", "apk"], category: "Malware", weight: 0.9 },
+  { words: ["téléchargez", "ouvre le fichier", ".apk"], category: "Malware", weight: 0.9 },
+  { words: ["facture impayée", "paiement requis", "votre facture"], category: "Escroquerie", weight: 0.7 }
 ];
 
-function extractFeatures(text) {
-  const lower = text.toLowerCase();
-  const tokens = lower.split(/\s+/).filter(Boolean);
-  return [
-    tokens.length,
-    text.length,
-    (text.match(/\d/g) || []).length,
-    /https?:\/\/|www\.|\.com|\.sn|\.net|\.io/.test(lower) ? 1 : 0,
-    (text.match(/!/g) || []).length,
-    text.split(/\s+/).filter(w => w === w.toUpperCase() && w.length > 1).length,
-    SUSPICIOUS_KEYWORDS.reduce((acc, kw) => acc + (lower.includes(kw) ? 1 : 0), 0)
-  ];
+// seuil minimal pour considérer qu'un SMS est une menace (0..1)
+const DETECTION_THRESHOLD = 0.4;
+
+// utilitaire : normalise le texte
+function normalizeText(s) {
+  return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-function normalizeTensor(tensor, minVals, maxVals) {
-  const eps = 1e-6;
-  return tensor.sub(tf.tensor1d(minVals)).div(tf.tensor1d(maxVals).sub(tf.tensor1d(minVals)).add(eps));
-}
-
-function ruleBasedScore(features) {
+// analyse texte -> renvoie {score, matches: [{keyword,category,weight}], category}
+function analyzeText(text) {
+  const s = normalizeText(text);
   let score = 0;
-  score += Math.min(features[6], 4) * 0.25;
-  score += features[3] * 0.35;
-  score += Math.min(features[2], 4) * 0.05;
-  score += Math.min(features[4], 3) * 0.05;
-  score += Math.min(features[5], 3) * 0.05;
-  if (features[0] <= 6 && features[6] > 0) score += 0.1;
-  return Math.min(1, score);
+  const matches = [];
+
+  for (const entry of KEYWORDS) {
+    for (const w of entry.words) {
+      // simple recherche mot-clé ; on utilise includes pour être permissif
+      if (s.includes(w)) {
+        // si plusieurs mots de la même catégorie apparaissent, on cumule
+        score += entry.weight;
+        matches.push({ keyword: w, category: entry.category, weight: entry.weight });
+        break; // éviter d'ajouter la même catégorie deux fois pour ce passage
+      }
+    }
+  }
+
+  // normaliser score (cap)
+  // hypothèse : pas plus de 3 catégories pertinentes en moyenne
+  score = Math.min(score / 2.5, 1); // tuning simple pour rester entre 0..1
+
+  // déterminer catégorie principale (celle avec le poids cumulé max)
+  const categoryCounts = {};
+  for (const m of matches) {
+    categoryCounts[m.category] = (categoryCounts[m.category] || 0) + m.weight;
+  }
+  const category = Object.keys(categoryCounts).length
+    ? Object.keys(categoryCounts).reduce((a,b) => categoryCounts[a] > categoryCounts[b] ? a : b)
+    : "Inconnu";
+
+  return { score, matches, category };
 }
 
-async function trainAndScan() {
-  const smsInput = document.getElementById('smsInput').value.trim();
-  const resultBox = document.getElementById('result');
-  const analyzeBtn = document.getElementById('analyzeBtn');
+// vérifie doublon simple (même texte + même catégorie + même date courte)
+function isDuplicateAlert(newAlert, existingAlerts) {
+  return existingAlerts.some(a =>
+    a.description === newAlert.description &&
+    a.categorie === newAlert.categorie
+  );
+}
 
-  if (!smsInput) {
-    resultBox.style.display = 'block';
-    resultBox.style.color = '#7a2a2a';
-    resultBox.textContent = 'Veuillez saisir un SMS à analyser.';
+// crée une alerte et la stocke
+function pushAlertToLocalStorage(alerte) {
+  const alertes = JSON.parse(localStorage.getItem("alertes") || "[]");
+  // éviter doublons
+  if (isDuplicateAlert(alerte, alertes)) return false;
+  alertes.unshift(alerte);
+  localStorage.setItem("alertes", JSON.stringify(alertes));
+  // déclencher storage event pour autres onglets (optionnel)
+  try { window.dispatchEvent(new Event('storage')); } catch(e) {}
+  return true;
+}
+
+// fonction appelée par le bouton "Analyser"
+async function trainAndScan() {
+  const btn = document.getElementById('analyzeBtn');
+  const txt = document.getElementById('smsInput').value.trim();
+  const resultDiv = document.getElementById('result');
+
+  if (!txt) {
+    resultDiv.textContent = "⚠️ Saisis d'abord le contenu du SMS.";
+    resultDiv.className = "result active";
     return;
   }
 
-  analyzeBtn.disabled = true;
-  analyzeBtn.classList.add('loading');
-  analyzeBtn.textContent = 'Analyse...';
+  // état UI
+  btn.classList.add('loading');
+  resultDiv.textContent = "Analyse en cours…";
+  resultDiv.className = "result active";
 
-  resultBox.style.display = 'block';
-  resultBox.textContent = 'Analyse en cours…';
+  // (ici on pourrait entraîner un modèle tfjs si tu veux; pour l'instant heuristique)
+  await new Promise(r => setTimeout(r, 600)); // petite attente pour UX
 
-  await new Promise(r => setTimeout(r, 300));
+  const analysis = analyzeText(txt);
 
-  const dataset = {
-    xs_text: [
-      'Gagnez 100 000 FCFA maintenant, cliquez ici http://bit.ly/xx',
-      'Félicitations ! Vous avez gagné un transfert Wave gratuit',
-      'URGENT: vérifiez votre compte Orange Money immédiatement',
-      'Bonjour, rendez-vous demain à 10h',
-      'Salut, tu viens au match ce soir ?',
-      'Appelle-moi stp, on se voit plus tard',
-      'Offre exclusive: réception gratuite, clique vite',
-      'Votre colis est prêt, confirmez ici www.track.sn',
-      'Comment vas-tu ?',
-      'Rappel: réunion vendredi 14h',
-    ],
-    ys: [1,1,1,0,0,0,1,1,0,0]
-  };
+  // format résultat
+  const scorePct = Math.round(analysis.score * 100);
+  let message = `Score de suspicion : ${scorePct}% — catégorie probable : ${analysis.category}.`;
 
-  const allFeatures = dataset.xs_text.map(extractFeatures);
-  const inputFeatures = extractFeatures(smsInput);
-  allFeatures.push(inputFeatures);
+  //if (analysis.matches.length) {
+   // message += " Mots-clés détectés : " + analysis.matches.map(m => m.keyword).slice(0,5).join(", ") + ".";
+  //}
 
-  const featureCount = allFeatures[0].length;
-  const mins = [], maxs = [];
-  for (let j = 0; j < featureCount; j++) {
-    const col = allFeatures.map(r => r[j]);
-    mins.push(Math.min(...col));
-    maxs.push(Math.max(...col));
-  }
+  // décider si on crée une alerte
+  if (analysis.score >= DETECTION_THRESHOLD) {
+    // construire alerte
+    const now = new Date();
+    const alerte = {
+      date: now.toLocaleString(),
+      localisation: "Non précisée",
+      description: txt,
+      categorie: analysis.category,
+      statut: "Nouveau",
+      anonyme: true,
+      image: null,
+      confidence: analysis.score
+    };
 
-  const xsNorm = normalizeTensor(tf.tensor2d(allFeatures.slice(0, -1)), mins, maxs);
-  const ysTensor = tf.tensor2d(dataset.ys, [dataset.ys.length, 1]);
-
-  const model = tf.sequential();
-  model.add(tf.layers.dense({ units: 8, activation: 'relu', inputShape: [featureCount] }));
-  model.add(tf.layers.dense({ units: 4, activation: 'relu' }));
-  model.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
-  model.compile({ optimizer: tf.train.adam(0.05), loss: 'binaryCrossentropy' });
-
-  try { await model.fit(xsNorm, ysTensor, { epochs: 40, batchSize: 4, verbose: 0 }); } catch {}
-
-  const inputTensor = normalizeTensor(tf.tensor2d([inputFeatures]), mins, maxs);
-  let prediction = ruleBasedScore(inputFeatures);
-  try { prediction = (await model.predict(inputTensor).data())[0]; } catch {}
-
-  const scorePercent = Math.round(prediction * 100);
-  const reasons = [];
-  if (inputFeatures[3]) reasons.push('contient un lien');
-  if (inputFeatures[6]) reasons.push('mots-clés suspects');
-  if (inputFeatures[2] >= 2) reasons.push('plusieurs chiffres');
-  if (inputFeatures[4]) reasons.push('ponctuation forte');
-  if (inputFeatures[5]) reasons.push('mots en MAJUSCULES');
-
-  if (prediction >= 0.55) {
-    resultBox.style.color = '#7a2a2a';
-    resultBox.textContent = `⚠️ SMS suspect (${scorePercent}%). Raisons : ${reasons.join(', ') || 'signaux détectés'}.`;
-  } else if (prediction >= 0.35) {
-    resultBox.style.color = '#7a4f1b';
-    resultBox.textContent = `⚠️ Suspicion modérée (${scorePercent}%). Vérifiez l'expéditeur ou le lien.`;
+    const pushed = pushAlertToLocalStorage(alerte);
+    if (pushed) {
+      message += " ✅ Signalement ajouté aux alertes.";
+    } else {
+      message += " ⚠️ Signalement similaire déjà présent.";
+    }
   } else {
-    resultBox.style.color = '#0b3a1b';
-    resultBox.textContent = `✅ SMS probablement sûr (${scorePercent}%). Restez vigilant.`;
+    message += " Aucune alerte ajoutée (non suffisament suspect).";
   }
 
-  analyzeBtn.disabled = false;
-  analyzeBtn.classList.remove('loading');
-  analyzeBtn.textContent = 'Analyser';
-  resultBox.classList.add('active');
+  // afficher résultat
+  resultDiv.innerHTML = `<strong>${analysis.score >= DETECTION_THRESHOLD ? '⚠️ Menace probable' : '✅ Pas suspect'}</strong><br>${message}`;
 
-  tf.dispose([xsNorm, ysTensor, inputTensor]);
+  // retrait état UI
+  btn.classList.remove('loading');
+
+  // Optionnel : reset textarea
+  // document.getElementById('smsInput').value = "";
 }
+
+/* Exporter pour debug si besoin (utile dans console) */
+window.trainAndScan = trainAndScan;
+window.analyzeText = analyzeText;

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de bord - Malaw Security</title>
+
+  <!-- Police Orbitron pour effet techno -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Fichiers CSS -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <div class="admin-container">
+    <!-- Barre latérale -->
+    <aside class="sidebar">
+      <!-- Logo -->
+      <div class="logo-container">
+        <img src="logo.png" alt="Logo Malawi Security" class="logo">
+      </div>
+
+      <!-- Date et heure -->
+      <div class="datetime">
+        <div id="date"></div>
+        <div id="time"></div>
+      </div>
+
+      <!-- Navigation -->
+      <nav>
+        <ul>
+          <li>
+            <a href="heatmap.html">
+              <img src="icons/heatmap.png" alt="Heatmap Icon">
+              Heatmap
+            </a>
+          </li>
+          <li>
+            <a href="alertes.html">
+              <img src="icons/alert.png" alt="Alertes Icon">
+              Alertes
+            </a>
+          </li>
+          <li>
+            <a href="stats.html">
+              <img src="icons/stats.png" alt="Stats Icon">
+              Stats
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+      <h1>Bienvenue sur le tableau de bord</h1>
+      <p>Sélectionnez une section à gauche pour gérer les données du système.</p>
+    </main>
+  </div>
+
+  <!-- Script pour afficher la date et l’heure -->
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      const dateElement = document.getElementById("date");
+      const timeElement = document.getElementById("time");
+
+      const jour = String(now.getDate()).padStart(2, "0");
+      const mois = String(now.getMonth() + 1).padStart(2, "0");
+      const annee = now.getFullYear();
+      const heures = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const secondes = String(now.getSeconds()).padStart(2, "0");
+
+      dateElement.textContent = `${jour}/${mois}/${annee}`;
+      timeElement.textContent = `${heures}:${minutes}:${secondes}`;
+    }
+
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+
+</body>
+</html>

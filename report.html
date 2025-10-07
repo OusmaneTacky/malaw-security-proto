@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signalement Anonyme</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #c9dfe9;
+      height: 100vh;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .phone-frame {
+      background: linear-gradient(180deg, #cfe0e6 0%, #dbe9ef 100%);
+      border-radius: 36px;
+      box-shadow: 0 18px 40px rgba(17,30,39,0.12),
+                  inset 0 -6px 10px rgba(255,255,255,0.6);
+      border: 6px solid rgba(0,0,0,0.15);
+      overflow: hidden;
+      width: 320px;
+      height: 580px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Bouton retour */
+    .back-btn {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      color: #1f1f1f;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 6px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .back-btn span {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #1f1f1f;
+    }
+
+    textarea {
+      width: 90%;
+      height: 180px;
+      border: none;
+      border-radius: 12px;
+      background: #f5f7fa;
+      font-size: 15px;
+      padding: 10px;
+      resize: none;
+      outline: none;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+    }
+
+    .options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 85%;
+      margin-top: 15px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #222;
+    }
+
+    .option img {
+      width: 28px;
+      height: 28px;
+      opacity: 0.8;
+      cursor: pointer;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 45px;
+      height: 25px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 25px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 19px;
+      width: 19px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #4CAF50;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    .send-btn {
+      margin-top: 25px;
+      background-color: #1fbf46;
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 60px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+      transition: background 0.2s ease;
+    }
+
+    .send-btn:hover {
+      background-color: #18a63b;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <a href="index.html" class="back-btn">
+      <span>←</span> Retour
+    </a>
+
+    <div class="logo">
+        <img src="logo.png" alt="Malaw Security Logo" class="logo-image">
+    </div>
+
+    <h2>Signalement anonyme</h2>
+
+    <textarea placeholder="Décris le scam..."></textarea>
+
+    <div class="options">
+      <div class="option">
+        <img src="camera-icon.png" alt="Caméra">
+      </div>
+      <div class="option">
+        <label for="anon">Anonyme</label>
+        <label class="switch">
+          <input type="checkbox" id="anon" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <button class="send-btn">Envoyer</button>
+  </div>
+</body>
+</html>

@@ -11,15 +11,50 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
 </head>
+
 <body>
   <div class="page-bg">
     <div class="container">
-      <div class="phone-frame" role="application" aria-label="Interface scanner sms">
+      <div class="phone-frame">
 
-        <div class="logo-wrapper">
-          <img src="logo.png" alt="Malaw Security Logo" class="logo-image">
+        <!-- Bouton du menu -->
+        <button class="menu-btn" id="menuBtn">
+          <div></div><div></div><div></div>
+        </button>
+
+        <!-- Menu latéral -->
+        <div class="side-menu" id="sideMenu">
+          <div class="menu-logo">
+            <img src="logoblanc.png" alt="Logo">
+          </div>
+          <a href="user.html">🏠 Accueil</a>
+          <a href="scan.html">📱 Scanner SMS</a>
+          <a href="report.html">🚨 Signalement</a>
+          <a href="malawbot.html">🤖 MalawBot</a>
+          <a href="quiz.html">🧠 Quiz</a>
         </div>
 
+        <!-- Bouton Assistant IA -->
+        <button id="botToggle" class="bot-toggle">
+          <img src="ai-icon-offi.png" alt="Assistant IA">
+        </button>
+
+        <!-- Assistant flottant -->
+        <div class="ai-assistant" id="aiAssistant">
+          <div class="ai-header">
+            <span>🤖 MalawBot</span>
+            <button id="closeAi">×</button>
+          </div>
+          <div class="ai-body" id="aiBody">
+            <p class="ai-msg bot">Salut 👋 Je suis MalawBot, ton assistant sécurité !</p>
+          </div>
+          <div class="ai-footer">
+            <input type="text" id="aiInput" placeholder="Pose ta question...">
+            <button id="sendAi">➤</button>
+          </div>
+        </div>
+
+        <!-- Contenu principal -->
         <header class="phone-header">
           <h2>Scanner SMS</h2>
         </header>
@@ -30,6 +65,15 @@
           <textarea id="smsInput" rows="8" placeholder="Ex: Gagnez 100 000 FCFA avec Wave, cliquez ici !"></textarea>
 
           <button id="analyzeBtn" class="btn-green" onclick="trainAndScan()">Analyser</button>
+          <!-- Bouton pour activer/désactiver la lecture vocale -->
+<div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+  <label for="ttsToggle" style="font-size:14px; color:#14202A;">🔊 Lecture vocale</label>
+  <label class="switch">
+    <input type="checkbox" id="ttsToggle">
+    <span class="slider"></span>
+  </label>
+</div>
+
 
           <div id="result" class="result" aria-live="polite"></div>
         </main>
@@ -38,5 +82,229 @@
   </div>
 
   <script src="script.js"></script>
+
+  <script>
+  // === Menu ===
+  const menuBtn = document.getElementById('menuBtn');
+  const sideMenu = document.getElementById('sideMenu');
+
+  menuBtn.addEventListener('click', () => {
+    sideMenu.classList.toggle('active');
+  });
+
+  // === Assistant IA ===
+  const botToggleBtn = document.getElementById('botToggle');
+  const aiAssistant = document.getElementById('aiAssistant');
+  const closeAi = document.getElementById('closeAi');
+  const aiInput = document.getElementById('aiInput');
+  const sendAi = document.getElementById('sendAi');
+  const aiBody = document.getElementById('aiBody');
+
+  botToggleBtn.addEventListener('click', () => {
+    aiAssistant.style.display = aiAssistant.style.display === 'flex' ? 'none' : 'flex';
+  });
+
+  closeAi.addEventListener('click', () => {
+    aiAssistant.style.display = 'none';
+  });
+
+  sendAi.addEventListener('click', () => {
+    const msg = aiInput.value.trim();
+    if (!msg) return;
+
+    const userMsg = document.createElement('p');
+    userMsg.className = 'ai-msg user';
+    userMsg.textContent = msg;
+    aiBody.appendChild(userMsg);
+    aiInput.value = '';
+
+    setTimeout(() => {
+      const botMsg = document.createElement('p');
+      botMsg.className = 'ai-msg bot';
+      botMsg.textContent = "Je te conseille d'éviter de cliquer sur les liens suspects 🔗";
+      aiBody.appendChild(botMsg);
+      aiBody.scrollTop = aiBody.scrollHeight;
+    }, 700);
+  });
+  </script>
+
+  <style>
+/* === STYLE UNIFIÉ REPORT/SCAN === */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Roboto', sans-serif; }
+
+body {
+  background: linear-gradient(180deg, #f6fbfd 0%, #e9f3f6 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 16px;
+}
+
+/* === Cadre téléphone === */
+.phone-frame {
+  background: linear-gradient(180deg, #cfe0e6 0%, #dbe9ef 100%);
+  border-radius: 36px;
+  box-shadow: 0 18px 40px rgba(17,30,39,0.12),
+              inset 0 -6px 10px rgba(255,255,255,0.6);
+  border: 6px solid rgba(0,0,0,0.15);
+  overflow: hidden;
+  width: 320px;
+  height: 580px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 18px;
+  position: relative;
+  transition: transform .2s ease-in-out;
+}
+.phone-frame:hover { transform: scale(0.92); }
+
+/* === Menu === */
+.menu-btn {
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 6;
+}
+.menu-btn div {
+  width: 28px;
+  height: 3px;
+  background: #14202A;
+  margin: 5px 0;
+  border-radius: 3px;
+  transition: 0.4s;
+}
+.side-menu {
+  position: absolute;
+  top: 0;
+  left: -230px;
+  width: 230px;
+  height: 100%;
+  background: linear-gradient(180deg,#1a2634,#27384a);
+  box-shadow: 4px 0 18px rgba(0,0,0,0.25);
+  padding-top: 20px;
+  transition: 0.4s ease;
+  border-radius: 0 16px 16px 0;
+  overflow: hidden;
+  z-index: 5;
+}
+.side-menu.active { left: 0; }
+.side-menu .menu-logo { text-align: center; margin-bottom: 20px; }
+.side-menu .menu-logo img { width: 100px; opacity: 0.9; }
+.side-menu a {
+  display: block;
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  transition: background 0.2s ease;
+}
+.side-menu a:hover { background: rgba(255,255,255,0.1); }
+
+/* === Bouton IA (transparent cercle fin) === */
+.bot-toggle {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(0,132,255,0.8);
+  border-radius: 50%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 7;
+}
+.bot-toggle img {
+  width: 22px;
+  height: 22px;
+  opacity: 0.85;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.bot-toggle:hover { border-color: #0078ff; }
+.bot-toggle:hover img { transform: scale(1.1); opacity: 1; }
+
+/* === Fenêtre Assistant IA === */
+.ai-assistant {
+  position: absolute;
+  bottom: 70px;
+  right: 16px;
+  width: 260px;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 8;
+}
+.ai-header {
+  background: linear-gradient(90deg, #0078ff, #00b7ff);
+  color: white;
+  font-weight: 600;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+.ai-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+.ai-body {
+  padding: 10px;
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ai-msg {
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  max-width: 90%;
+  line-height: 1.3;
+}
+.ai-msg.bot { background: #e6f3ff; align-self: flex-start; }
+.ai-msg.user { background: #d9fdd3; align-self: flex-end; }
+.ai-footer {
+  display: flex;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding: 6px;
+}
+.ai-footer input {
+  flex: 1;
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 13px;
+  background: rgba(255,255,255,0.9);
+}
+.ai-footer button {
+  background: linear-gradient(90deg, #0078ff, #00b7ff);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-left: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+  </style>
 </body>
 </html>

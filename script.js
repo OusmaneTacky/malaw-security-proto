@@ -1,129 +1,146 @@
-/********************************************************************
- * script.js - Scanner SMS avec TensorFlow.js
- * Entraîne un modèle simple (texte -> suspicion scam)
- * et ajoute automatiquement les scams détectés dans localStorage.alertes
- ********************************************************************/
+// script.js - Scanner SMS -> crée alertes dans localStorage
 
-// === Données d'entraînement (simplifiées pour la démo) ===
-const trainData = [
-  // SCAMS
-  { text: "Gagnez 100000 FCFA avec Wave cliquez ici", label: 1 },
-  { text: "Votre compte Orange Money sera suspendu, vérifiez maintenant", label: 1 },
-  { text: "Félicitations vous avez gagné un iPhone gratuit", label: 1 },
-  { text: "Cliquez sur ce lien pour recevoir votre prix", label: 1 },
-  { text: "Votre compte bancaire est bloqué, connectez-vous ici", label: 1 },
-  // NORMAUX
-  { text: "Salut on se voit demain à la réunion", label: 0 },
-  { text: "Ton colis est arrivé au bureau de poste", label: 0 },
-  { text: "Rappel de ta facture Senelec", label: 0 },
-  { text: "Je t'appelle après le travail", label: 0 },
-  { text: "RDV à 18h au restaurant", label: 0 }
+// Configuration simple (mots-clés -> catégorie, poids)
+const KEYWORDS = [
+  { words: ["gagnez", "gagner", "gagné", "lot", "concours", "tirage"], category: "Fraude concours", weight: 0.8 },
+  { words: ["wave", "orange money", "om", "mobile money", "virement", "transfert"], category: "Escroquerie", weight: 0.9 },
+  { words: ["cliquez ici", "lien", "http", "https", "bit.ly", "shortener"], category: "Phishing", weight: 0.95 },
+  { words: ["mot de passe", "mdp", "identifiant", "login"], category: "Vol de données", weight: 0.9 },
+  { words: ["livraison", "livreur", "paiement à la livraison", "paiement à réception"], category: "Fraude livraison", weight: 0.7 },
+  { words: ["numero bloque", "vérifier votre compte", "suspendu", "compte suspendu"], category: "Vishing / phishing", weight: 0.9 },
+  { words: ["code", "otp", "mot de passe à usage unique", "one-time password"], category: "SIM swap / récupération", weight: 0.85 },
+  { words: ["virus", "malware", "télécharger", "apk"], category: "Malware", weight: 0.9 },
+  { words: ["téléchargez", "ouvre le fichier", ".apk"], category: "Malware", weight: 0.9 },
+  { words: ["facture impayée", "paiement requis", "votre facture"], category: "Escroquerie", weight: 0.7 }
 ];
 
-// === Prétraitement ===
+// seuil minimal pour considérer qu'un SMS est une menace (0..1)
+const DETECTION_THRESHOLD = 0.4;
 
-// Tokenisation (on fait une simple séparation par espaces)
-function tokenize(text) {
-  return text.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).filter(Boolean);
+// utilitaire : normalise le texte
+function normalizeText(s) {
+  return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-// Créer vocabulaire
-const vocabSet = new Set();
-trainData.forEach(d => tokenize(d.text).forEach(w => vocabSet.add(w)));
-const vocab = Array.from(vocabSet);
-const wordIndex = Object.fromEntries(vocab.map((w, i) => [w, i + 1])); // index 0 réservé
+// analyse texte -> renvoie {score, matches: [{keyword,category,weight}], category}
+function analyzeText(text) {
+  const s = normalizeText(text);
+  let score = 0;
+  const matches = [];
 
-// Vectorisation simple (Bag of Words)
-function vectorize(text) {
-  const tokens = tokenize(text);
-  const vec = new Array(vocab.length).fill(0);
-  tokens.forEach(t => {
-    const idx = wordIndex[t];
-    if (idx) vec[idx - 1] = 1;
-  });
-  return vec;
+  for (const entry of KEYWORDS) {
+    for (const w of entry.words) {
+      // simple recherche mot-clé ; on utilise includes pour être permissif
+      if (s.includes(w)) {
+        // si plusieurs mots de la même catégorie apparaissent, on cumule
+        score += entry.weight;
+        matches.push({ keyword: w, category: entry.category, weight: entry.weight });
+        break; // éviter d'ajouter la même catégorie deux fois pour ce passage
+      }
+    }
+  }
+
+  // normaliser score (cap)
+  // hypothèse : pas plus de 3 catégories pertinentes en moyenne
+  score = Math.min(score / 2.5, 1); // tuning simple pour rester entre 0..1
+
+  // déterminer catégorie principale (celle avec le poids cumulé max)
+  const categoryCounts = {};
+  for (const m of matches) {
+    categoryCounts[m.category] = (categoryCounts[m.category] || 0) + m.weight;
+  }
+  const category = Object.keys(categoryCounts).length
+    ? Object.keys(categoryCounts).reduce((a,b) => categoryCounts[a] > categoryCounts[b] ? a : b)
+    : "Inconnu";
+
+  return { score, matches, category };
 }
 
-// === Entraînement du modèle ===
-
-let model = null;
-let isTrained = false;
-
-async function trainModel() {
-  if (isTrained) return model;
-
-  const xs = tf.tensor2d(trainData.map(d => vectorize(d.text)));
-  const ys = tf.tensor2d(trainData.map(d => [d.label]));
-
-  model = tf.sequential();
-  model.add(tf.layers.dense({ units: 12, activation: "relu", inputShape: [vocab.length] }));
-  model.add(tf.layers.dense({ units: 8, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 1, activation: "sigmoid" }));
-
-  model.compile({ optimizer: tf.train.adam(0.01), loss: "binaryCrossentropy", metrics: ["accuracy"] });
-
-  await model.fit(xs, ys, { epochs: 40, batchSize: 4, verbose: 0 });
-
-  isTrained = true;
-  xs.dispose();
-  ys.dispose();
-  console.log("✅ Modèle entraîné (TF.js)");
-  return model;
+// vérifie doublon simple (même texte + même catégorie + même date courte)
+function isDuplicateAlert(newAlert, existingAlerts) {
+  return existingAlerts.some(a =>
+    a.description === newAlert.description &&
+    a.categorie === newAlert.categorie
+  );
 }
 
-// === Analyse et stockage des alertes ===
-
+// crée une alerte et la stocke
 function pushAlertToLocalStorage(alerte) {
   const alertes = JSON.parse(localStorage.getItem("alertes") || "[]");
+  // éviter doublons
+  if (isDuplicateAlert(alerte, alertes)) return false;
   alertes.unshift(alerte);
   localStorage.setItem("alertes", JSON.stringify(alertes));
+  // déclencher storage event pour autres onglets (optionnel)
+  try { window.dispatchEvent(new Event('storage')); } catch(e) {}
   return true;
 }
 
-// === Fonction principale appelée au clic ===
-
+// fonction appelée par le bouton "Analyser"
 async function trainAndScan() {
-  const txt = document.getElementById("smsInput").value.trim();
-  const res = document.getElementById("result");
-  const btn = document.getElementById("analyzeBtn");
+  const btn = document.getElementById('analyzeBtn');
+  const txt = document.getElementById('smsInput').value.trim();
+  const resultDiv = document.getElementById('result');
 
   if (!txt) {
-    res.textContent = "⚠️ Saisis un message à analyser.";
+    resultDiv.textContent = "⚠️ Saisis d'abord le contenu du SMS.";
+    resultDiv.className = "result active";
     return;
   }
 
-  btn.disabled = true;
-  res.textContent = "🔍 Entraînement du modèle et analyse...";
-  await trainModel();
+  // état UI
+  btn.classList.add('loading');
+  resultDiv.textContent = "Analyse en cours…";
+  resultDiv.className = "result active";
 
-  const inputVec = tf.tensor2d([vectorize(txt)]);
-  const pred = model.predict(inputVec);
-  const score = (await pred.data())[0];
-  inputVec.dispose();
-  pred.dispose();
+  // (ici on pourrait entraîner un modèle tfjs si tu veux; pour l'instant heuristique)
+  await new Promise(r => setTimeout(r, 600)); // petite attente pour UX
 
-  const now = new Date();
-  const alertObj = {
-    date: now.toLocaleString(),
-    description: txt,
-    categorie: score >= 0.5 ? "Phishing / Scam SMS" : "Non suspect",
-    localisation: "Non précisée",
-    statut: "Nouveau",
-    anonyme: true,
-    image: null,
-    confiance: Math.round(score * 100)
-  };
+  const analysis = analyzeText(txt);
 
-  if (score >= 0.5) {
-    pushAlertToLocalStorage(alertObj);
-    res.innerHTML = `<strong>⚠️ Scam détecté</strong><br>Score : ${(score*100).toFixed(1)}%<br>✅ Ajouté aux alertes.`;
+  // format résultat
+  const scorePct = Math.round(analysis.score * 100);
+  let message = `Score de suspicion : ${scorePct}% — catégorie probable : ${analysis.category}.`;
+
+  //if (analysis.matches.length) {
+   // message += " Mots-clés détectés : " + analysis.matches.map(m => m.keyword).slice(0,5).join(", ") + ".";
+  //}
+
+  // décider si on crée une alerte
+  if (analysis.score >= DETECTION_THRESHOLD) {
+    // construire alerte
+    const now = new Date();
+    const alerte = {
+      date: now.toLocaleString(),
+      localisation: "Non précisée",
+      description: txt,
+      categorie: analysis.category,
+      statut: "Nouveau",
+      anonyme: true,
+      image: null,
+      confidence: analysis.score
+    };
+
+    const pushed = pushAlertToLocalStorage(alerte);
+    if (pushed) {
+      message += " ✅ Signalement ajouté aux alertes.";
+    } else {
+      message += " ⚠️ Signalement similaire déjà présent.";
+    }
   } else {
-    res.innerHTML = `<strong>✅ Aucun scam détecté</strong><br>Score : ${(score*100).toFixed(1)}%.`;
+    message += " Aucune alerte ajoutée (non suffisament suspect).";
   }
 
-  btn.disabled = false;
-  console.log("Analyse terminée :", alertObj);
+  // afficher résultat
+  resultDiv.innerHTML = `<strong>${analysis.score >= DETECTION_THRESHOLD ? '⚠️ Menace probable' : '✅ Pas suspect'}</strong><br>${message}`;
+
+  // retrait état UI
+  btn.classList.remove('loading');
+
+  // Optionnel : reset textarea
+  // document.getElementById('smsInput').value = "";
 }
 
-// Expose à la page HTML
+/* Exporter pour debug si besoin (utile dans console) */
 window.trainAndScan = trainAndScan;
+window.analyzeText = analyzeText;

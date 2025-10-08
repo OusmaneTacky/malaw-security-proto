@@ -5,25 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Malaw Security - Quiz de Sensibilisation</title>
 
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="quiz.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <div class="page-bg">
     <div class="container">
-      <div class="phone-frame" role="application" aria-label="Interface quiz cybersécurité">
+      <div class="phone-frame">
 
-        <div class="logo-wrapper">
-          <img src="logo.png" alt="Malaw Security Logo" class="logo-image">
+        <!-- Bouton du menu -->
+        <button class="menu-btn" id="menuBtn">
+          <div></div><div></div><div></div>
+        </button>
+
+        <!-- Menu latéral -->
+        <div class="side-menu" id="sideMenu">
+          <div class="menu-logo">
+            <img src="logoblanc.png" alt="Logo">
+          </div>
+          <a href="user.html">🏠 Accueil</a>
+          <a href="scan.html">📱 Scanner SMS</a>
+          <a href="report.html">🚨 Signalement</a>
+          <a href="malawbot.html">🤖 MalawBot</a>
+          <a href="quiz.html" class="active">🧠 Quiz</a>
         </div>
 
-        <header class="phone-header">
-          <h2>Quiz de Sensibilisation</h2>
-        </header>
+        <!-- Bouton Assistant IA -->
+        <button id="botToggle" class="bot-toggle">
+          <img src="ai-icon-offi.png" alt="Assistant IA">
+        </button>
 
+        <!-- Assistant flottant -->
+        <div class="ai-assistant" id="aiAssistant">
+          <div class="ai-header">
+            <span>🤖 MalawBot</span>
+            <button id="closeAi">×</button>
+          </div>
+          <div class="ai-body" id="aiBody">
+            <p class="ai-msg bot">Salut 👋 Prêt pour tester ta vigilance ?</p>
+          </div>
+          <div class="ai-footer">
+            <input type="text" id="aiInput" placeholder="Pose ta question...">
+            <button id="sendAi">➤</button>
+          </div>
+        </div>
+
+        <!-- Contenu principal -->
         <main class="phone-body" id="quiz-body">
+          <h2 class="phone-header">Quiz de Sensibilisation</h2>
           <p class="subtitle">Teste ta vigilance face aux cybermenaces 💻</p>
 
           <div id="quiz-container">
@@ -51,11 +81,53 @@
             <button class="btn-green" onclick="restartQuiz()">Refaire le quiz 🔁</button>
           </div>
         </main>
-
       </div>
     </div>
   </div>
 
   <script src="quiz.js"></script>
+
+  <!-- Menu & IA scripts -->
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const botToggleBtn = document.getElementById('botToggle');
+    const aiAssistant = document.getElementById('aiAssistant');
+    const closeAi = document.getElementById('closeAi');
+    const aiInput = document.getElementById('aiInput');
+    const sendAi = document.getElementById('sendAi');
+    const aiBody = document.getElementById('aiBody');
+
+    // === Menu latéral ===
+    menuBtn.addEventListener('click', () => {
+      sideMenu.classList.toggle('active');
+    });
+
+    // === Assistant IA ===
+    botToggleBtn.addEventListener('click', () => {
+      aiAssistant.style.display = aiAssistant.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    closeAi.addEventListener('click', () => {
+      aiAssistant.style.display = 'none';
+    });
+
+    sendAi.addEventListener('click', () => {
+      const msg = aiInput.value.trim();
+      if (!msg) return;
+      const userMsg = document.createElement('p');
+      userMsg.className = 'ai-msg user';
+      userMsg.textContent = msg;
+      aiBody.appendChild(userMsg);
+      aiInput.value = '';
+      setTimeout(() => {
+        const botMsg = document.createElement('p');
+        botMsg.className = 'ai-msg bot';
+        botMsg.textContent = "Bonne réponse ou pas, le principal c’est d’apprendre 😉";
+        aiBody.appendChild(botMsg);
+        aiBody.scrollTop = aiBody.scrollHeight;
+      }, 700);
+    });
+  </script>
 </body>
 </html>

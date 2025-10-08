@@ -42,9 +42,7 @@
       font-size: 14px;
     }
 
-    .suggestion:hover {
-      background: #e9f5ff;
-    }
+    .suggestion:hover { background: #e9f5ff; }
 
     /* --- Liste déroulante --- */
     .select-type {
@@ -57,23 +55,175 @@
       outline: none;
       background-color: white;
     }
+
+    /* === MENU === */
+    .menu-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .menu-btn div {
+      width: 28px;
+      height: 3px;
+      background: #14202A;
+      margin: 5px 0;
+      border-radius: 3px;
+      transition: 0.4s;
+    }
+    .side-menu {
+      position: absolute;
+      top: 0;
+      left: -230px;
+      width: 230px;
+      height: 100%;
+      background: linear-gradient(180deg,#1a2634,#27384a);
+      box-shadow: 4px 0 18px rgba(0,0,0,0.25);
+      padding-top: 20px;
+      transition: 0.4s ease;
+      border-radius: 0 16px 16px 0;
+      overflow: hidden;
+      z-index: 4;
+    }
+    .side-menu.active { left: 0; }
+    .side-menu .menu-logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .side-menu .menu-logo img {
+      width: 100px;
+      opacity: 0.9;
+    }
+    .side-menu a {
+      display: block;
+      color: white;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: background 0.2s ease;
+    }
+    .side-menu a:hover { background: rgba(255,255,255,0.1); }
+
+    /* === MalawBot flottant === */
+    .malawbot-widget {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 300px;
+      height: 400px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 100;
+    }
+    .malawbot-header {
+      background: #0077cc;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .malawbot-body {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: #f5f8fb;
+    }
+    .malawbot-body .msg {
+      margin-bottom: 8px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      max-width: 85%;
+    }
+    .malawbot-body .bot { background: #e6f2ff; align-self: flex-start; }
+    .malawbot-body .user { background: #d3f8d3; align-self: flex-end; }
+    .malawbot-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+      padding: 8px;
+      background: white;
+    }
+    .malawbot-input input {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 14px;
+    }
+    .malawbot-input button {
+      background: #0077cc;
+      color: white;
+      border: none;
+      padding: 8px 10px;
+      margin-left: 6px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    /* === Bouton IA (style Meta WhatsApp) === */
+.bot-toggle {
+  background: linear-gradient(135deg, #0078ff, #00c6ff);
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  margin-left: 10px; /* espace entre Envoyer et Anonyme */
+  transition: transform 0.2s ease;
+}
+.bot-toggle:hover {
+  transform: scale(1.05);
+}
   </style>
 </head>
+
 <body>
   <div class="phone-frame">
-    <a href="index.html" class="back-btn">
-      <span>←</span> Retour
-    </a>
+
+    <!-- Bouton du menu -->
+    <button class="menu-btn" id="menuBtn">
+      <div></div><div></div><div></div>
+    </button>
+
+    <!-- Menu latéral -->
+    <div class="side-menu" id="sideMenu">
+      <div class="menu-logo">
+        <img src="logoblanc.png" alt="Logo">
+      </div>
+      <a href="user.html">🏠 Accueil</a>
+      <a href="scan.html">📱 Scanner SMS</a>
+      <a href="report.html">🚨 Signalement</a>
+      <a href="malawbot.html">🤖 MalawBot</a>
+      <a href="quiz.html">🧠 Quiz</a>
+    </div>
 
     <div class="logo">
       <img src="logo.png" alt="Malaw Security Logo" class="logo-image">
     </div>
+<!-- Bouton Assistant IA -->
+<button id="botToggle" class="bot-toggle">
+  <img src="ai-icon-offi.png" alt="Assistant IA">
+</button>
 
     <h2>Signalement anonyme</h2>
 
     <textarea id="message" placeholder="Merci de faire une description ici..."></textarea>
 
-    <!-- ✅ Liste déroulante type d'alerte -->
     <select id="alertType" class="select-type">
       <option value="" disabled selected>📋 Sélectionne le type d'alerte</option>
       <option value="Phishing">Phishing</option>
@@ -88,31 +238,18 @@
       <option value="Autre">Autre</option>
     </select>
 
-    <!-- ✅ Champ de lieu avec suggestions -->
     <div class="location-input">
-      <input
-        type="text"
-        id="locationInput"
-        placeholder="🗺️ Saisis le lieu (ville, région...)"
-        autocomplete="off"
-      />
+      <input type="text" id="locationInput" placeholder="🗺️ Saisis le lieu (ville, région...)" autocomplete="off"/>
       <div id="suggestions" class="suggestions" style="display:none;"></div>
     </div>
 
     <div class="options">
       <div class="option">
         <label for="photoInput">
-          <img src="camera-icon.png" alt="Caméra" title="Prendre ou choisir une photo">
+          <img src="photo.png" alt="Caméra" title="Prendre ou choisir une photo">
         </label>
-        <input 
-          type="file" 
-          id="photoInput" 
-          accept="image/*" 
-          capture="environment" 
-          style="display: none;"
-        >
+        <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;">
       </div>
-
       <div class="option">
         <label for="anon">Anonyme</label>
         <label class="switch">
@@ -123,9 +260,29 @@
     </div>
 
     <button class="send-btn" id="sendBtn">Envoyer</button>
-  </div>
+   <!-- === Assistant flottant MalawBot === -->
+    <div class="malawbot-widget" id="malawbotWidget">
+      <div class="malawbot-header">
+        🤖 MalawBot
+        <button id="closeBot">×</button>
+      </div>
+      <div class="malawbot-body" id="botMessages">
+        <div class="msg bot">Salut 👋 ! Je peux t’aider à formuler ton signalement ou reconnaître une arnaque.</div>
+      </div>
+      <div class="malawbot-input">
+        <input type="text" id="botInput" placeholder="Pose ta question ici..." />
+        <button id="botSend">Envoyer</button>
+      </div>
+    </div>
+</div>
 
   <script>
+    // === Menu ===
+    const menuBtn = document.getElementById('menuBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    menuBtn.addEventListener('click', () => sideMenu.classList.toggle('active'));
+
+    // === Signalement ===
     const sendBtn = document.getElementById('sendBtn');
     const message = document.getElementById('message');
     const anonCheckbox = document.getElementById('anon');
@@ -133,85 +290,54 @@
     const locationInput = document.getElementById('locationInput');
     const suggestionsDiv = document.getElementById('suggestions');
     const alertType = document.getElementById('alertType');
-
     let localisation = "Non précisée";
 
-    // ✅ Autocomplétion du champ de localisation
     locationInput.addEventListener('input', async () => {
       const query = locationInput.value.trim();
-      if (query.length < 2) {
-        suggestionsDiv.style.display = "none";
-        return;
-      }
-
+      if (query.length < 2) return suggestionsDiv.style.display = "none";
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5`);
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`);
         const data = await res.json();
         suggestionsDiv.innerHTML = "";
-
-        if (data.length === 0) {
-          suggestionsDiv.style.display = "none";
-          return;
-        }
-
+        if (!data.length) return suggestionsDiv.style.display = "none";
         data.forEach(loc => {
-          const region = loc.address.state || loc.address.region || loc.address.county || "";
           const item = document.createElement("div");
           item.classList.add("suggestion");
-          item.textContent = `${loc.display_name}`;
+          item.textContent = loc.display_name;
           item.addEventListener("click", () => {
             locationInput.value = loc.display_name;
-            localisation = region || loc.display_name;
+            localisation = loc.address?.state || loc.display_name;
             suggestionsDiv.style.display = "none";
           });
           suggestionsDiv.appendChild(item);
         });
-
         suggestionsDiv.style.display = "block";
-      } catch (err) {
-        console.error("Erreur API Nominatim :", err);
-      }
+      } catch {}
     });
 
-    // ✅ Clic en dehors -> fermer suggestions
     document.addEventListener("click", (e) => {
-      if (!locationInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+      if (!locationInput.contains(e.target) && !suggestionsDiv.contains(e.target))
         suggestionsDiv.style.display = "none";
-      }
     });
 
-    // ✅ Enregistrement du signalement
     sendBtn.addEventListener('click', () => {
-      const text = message.value.trim();
-      const type = alertType.value;
-
-      if (!text) {
-        alert("⚠️ Merci d’écrire un message avant d’envoyer !");
-        return;
-      }
-
-      if (!type) {
-        alert("⚠️ Merci de sélectionner un type d’alerte !");
-        return;
-      }
-
+      const text = message.value.trim(), type = alertType.value;
+      if (!text) return alert("⚠️ Merci d’écrire un message !");
+      if (!type) return alert("⚠️ Sélectionne un type d’alerte !");
       const alerte = {
         date: new Date().toLocaleString(),
-        localisation: localisation || locationInput.value || "Non précisée",
+        localisation,
         description: text,
         categorie: type,
         statut: "Nouveau",
         anonyme: anonCheckbox.checked,
         image: photoInput.files[0]?.name || null
       };
-
       const alertes = JSON.parse(localStorage.getItem("alertes") || "[]");
       alertes.unshift(alerte);
       localStorage.setItem("alertes", JSON.stringify(alertes));
-
       sendBtn.textContent = "✅ Envoyé !";
       sendBtn.disabled = true;
-      sendBtn.style.background = "linear-gradient(180deg,#43a047,#388e3c)";
       setTimeout(() => {
         sendBtn.textContent = "Envoyer";
         sendBtn.disabled = false;
@@ -223,10 +349,45 @@
       }, 2500);
     });
 
-    // ✅ Option photo
-    photoInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (file) alert("📸 Image sélectionnée : " + file.name);
+    // === Assistant MalawBot ===
+    const botToggle = document.getElementById("botToggle");
+    const botWidget = document.getElementById("malawbotWidget");
+    const botSend = document.getElementById("botSend");
+    const botInput = document.getElementById("botInput");
+    const botMessages = document.getElementById("botMessages");
+    const closeBot = document.getElementById("closeBot");
+
+    botToggle.addEventListener("click", () => {
+      botWidget.style.display = "flex";
+      botToggle.style.display = "none";
+    });
+
+    closeBot.addEventListener("click", () => {
+      botWidget.style.display = "none";
+      botToggle.style.display = "block";
+    });
+
+    function appendBotMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("msg", sender);
+      msg.textContent = text;
+      botMessages.appendChild(msg);
+      botMessages.scrollTop = botMessages.scrollHeight;
+    }
+
+    botSend.addEventListener("click", () => {
+      const text = botInput.value.trim();
+      if (!text) return;
+      appendBotMessage(text, "user");
+      botInput.value = "";
+
+      setTimeout(() => {
+        let response = "Je ne suis pas sûr de comprendre 🤔. Peux-tu préciser ?";
+        if (text.includes("phishing") || text.includes("lien")) response = "⚠️ Si tu reçois un lien douteux, ne clique surtout pas.";
+        else if (text.includes("wave")) response = "⚠️ Les faux messages Wave sont fréquents. Le numéro officiel est 1443.";
+        else if (text.includes("bonjour") || text.includes("salut")) response = "Salut 👋 ! En quoi puis-je t’aider ?";
+        appendBotMessage(response, "bot");
+      }, 600);
     });
   </script>
 </body>

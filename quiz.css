@@ -1,163 +1,42 @@
-/* === Base et structure === */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; font-family: 'Roboto', sans-serif; }
-
-body {
-  background-color: #ECEFF1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-}
-
-.page-bg {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(180deg, #f6fbfd 0%, #e9f3f6 100%);
-  padding: 40px 16px;
-}
-
-.container {
-  width: 400px;
-  max-width: 95%;
-  text-align: center;
-}
-
-/* === Téléphone === */
-.phone-frame {
-  background: linear-gradient(180deg, #cfe0e6 0%, #dbe9ef 100%);
-  border-radius: 36px;
-  box-shadow: 0 18px 40px rgba(17,30,39,0.12),
-              inset 0 -6px 10px rgba(255,255,255,0.6);
-  border: 6px solid rgba(0,0,0,0.15);
-  width: 320px;
-  height: 580px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 22px 18px;
-  transform: scale(0.9);
-  transition: transform .2s ease-in-out;
-}
-
-.phone-frame:hover { transform: scale(0.92); }
-
-/* === Logo et entête === */
-.logo-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-top: 8px;
-}
-.logo-image {
-  width: 150px;
-  max-width: 70%;
-  height: auto;
-  opacity: 0.95;
-}
-
-.phone-header {
-  margin-top: 16px;
-  width: 100%;
-  text-align: center;
-}
-.phone-header h2 {
-  font-family: 'Merriweather', serif;
-  font-size: 26px;
-  color: rgba(20,30,34,0.9);
-}
-.subtitle {
-  font-size: 15px;
-  color: rgba(20,30,34,0.7);
-  margin-bottom: 18px;
-}
-
-/* === Quiz === */
-#quiz-container, #result-container {
-  width: 100%;
-  text-align: center;
-}
+/* === QUIZ STYLE === */
+#quiz-body { text-align: center; }
 
 .question {
-  font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
+  margin-bottom: 16px;
   color: #14202A;
-  margin-bottom: 18px;
-  line-height: 1.4em;
-  padding: 0 10px;
 }
 
 .options {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 10px;
 }
 
 .option-btn {
-  width: 85%;
   background: white;
+  border: 2px solid #0078ff;
   border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.1);
-  box-shadow: 0 4px 10px rgba(10,20,30,0.06);
-  padding: 12px 18px;
-  margin-bottom: 10px;
-  font-size: 15px;
-  color: #333;
+  padding: 10px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
-
 .option-btn:hover {
-  background: #eef7ef;
-  transform: translateY(-2px);
+  background: #e8f3ff;
+  transform: scale(1.03);
 }
 
-/* === Boutons === */
-.btn-green {
-  margin-top: 16px;
-  width: 82%;
-  background: linear-gradient(180deg,#49b04a,#3c9f3a);
-  border: none;
-  color: white;
-  font-weight: 800;
-  font-size: 18px;
-  border-radius: 14px;
-  padding: 10px 18px;
-  cursor: pointer;
-  box-shadow: 0 10px 22px rgba(60,159,58,0.18);
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.btn-green:hover { transform: translateY(-3px); }
-.btn-green:active { transform: translateY(-1px) scale(.998); }
-
-/* === Résultats === */
 .result-section {
-  width: 90%;
-  background: rgba(255,255,255,0.96);
-  border-radius: 16px;
-  padding: 14px 16px;
-  box-shadow: 0 6px 14px rgba(10,20,30,0.08);
-  text-align: center;
-  overflow-y: auto;
-}
-
-#mistakes {
   text-align: left;
   font-size: 14px;
-  color: #333;
-  margin-top: 10px;
 }
-
-#mistakes p { margin-bottom: 10px; }
-#mistakes hr { border: none; border-bottom: 1px solid #ddd; margin: 8px 0; }
 
 .tips {
   margin-top: 12px;
-  text-align: left;
-  font-size: 14px;
-  color: #243;
+  background: #f2faff;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
 }
-.tips ul { margin-left: 16px; }
+.tips ul { margin-top: 6px; padding-left: 20px; }

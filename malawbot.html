@@ -1,34 +1,268 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>MalawBot - Assistant IA Malaw Sécurity</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MalawBot - Assistant IA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: 'Poppins', sans-serif; background:#f3f8fc; margin:0; padding:0; display:flex; justify-content:center; align-items:center; height:100vh; }
-    .chatbox { width:380px; background:white; border-radius:16px; box-shadow:0 4px 15px rgba(0,0,0,0.15); display:flex; flex-direction:column; overflow:hidden; }
-    .header { background:#0077cc; color:white; padding:12px; font-weight:600; text-align:center; }
-    .messages { flex:1; padding:12px; overflow-y:auto; }
-    .msg { margin-bottom:10px; max-width:85%; padding:10px 14px; border-radius:14px; line-height:1.4; }
-    .user { background:#e6f2ff; align-self:flex-end; }
-    .bot { background:#f0f0f0; align-self:flex-start; }
-    .input-area { display:flex; padding:10px; background:#fafafa; border-top:1px solid #ddd; }
-    .input-area input { flex:1; border:none; padding:10px; border-radius:8px; font-size:14px; }
-    .input-area button { background:#0077cc; color:white; border:none; padding:10px 14px; border-radius:8px; margin-left:8px; cursor:pointer; }
+    body {
+      background-color: #ECEFF1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .page-bg {
+      background: linear-gradient(180deg, #f6fbfd 0%, #e9f3f6 100%);
+      padding: 40px 16px;
+      border-radius: 20px;
+    }
+
+    .container {
+      width: 400px;
+      max-width: 95%;
+      text-align: center;
+      position: relative;
+    }
+
+    /* === Phone frame === */
+    .chatbox {
+      position: relative;
+      background: linear-gradient(180deg, #cfe0e6 0%, #dbe9ef 100%);
+      border-radius: 36px;
+      box-shadow: 0 18px 40px rgba(17,30,39,0.12),
+                  inset 0 -6px 10px rgba(255,255,255,0.6);
+      border: 6px solid rgba(0,0,0,0.15);
+      width: 320px;
+      height: 580px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding-top: 36px;
+    }
+
+    /* Barre blanche en haut */
+    .top-bar {
+      position: absolute;
+      top: 10px;
+      left: 16px;
+      right: 16px;
+      height: 6px;
+      background: #ffffff;
+      border-radius: 6px;
+      opacity: 0.98;
+      z-index: 6;
+    }
+
+    /* Bouton menu */
+    .menu-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 7;
+    }
+
+    .menu-btn div {
+      width: 26px;
+      height: 3px;
+      background: #14202A;
+      border-radius: 3px;
+      transition: 0.3s;
+    }
+
+    /* === Menu latéral interne === */
+    .side-menu {
+      position: absolute;
+      top: 0;
+      left: -70%;
+      width: 70%;
+      height: 100%;
+      background: linear-gradient(180deg,#1a2634,#27384a);
+      padding-top: 20px;
+      transition: left 0.4s ease;
+      z-index: 5;
+      border-radius: 0 20px 20px 0;
+      box-shadow: 8px 0 20px rgba(0,0,0,0.3);
+      backdrop-filter: blur(4px);
+    }
+
+    .side-menu.active { left: 0; }
+
+    .menu-logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .menu-logo img {
+      width: 100px;
+      opacity: 0.9;
+    }
+
+    .side-menu a {
+      display: block;
+      color: white;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: background 0.2s ease;
+    }
+
+    .side-menu a:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* === Chatbot === */
+    .header {
+      font-family: 'Merriweather', serif;
+      font-size: 22px;
+      color: rgba(20,30,34,0.9);
+      margin-bottom: 10px;
+      z-index: 1;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 10px 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 1;
+    }
+
+    .msg {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      font-size: 14px;
+    }
+
+    .user {
+      background: #e6f2ff;
+      align-self: flex-end;
+    }
+
+    .bot {
+      background: #f9f9f9;
+      align-self: flex-start;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 10px;
+      background: rgba(255,255,255,0.9);
+      border-top: 1px solid #ccc;
+      border-radius: 0 0 24px 24px;
+      z-index: 1;
+    }
+
+    .input-area input {
+      flex: 1;
+      border: 1px solid rgba(0,0,0,0.1);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .input-area button {
+      background: linear-gradient(180deg,#49b04a,#3c9f3a);
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    .voice-toggle {
+  position: absolute;
+  bottom: 72px; /* juste au-dessus de la barre d'entrée */
+  right: 16px;
+  background: white;
+  border: 2px solid rgba(0,0,0,0.1);
+  font-size: 22px;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  cursor: pointer;
+  z-index: 7;
+  transition: transform 0.2s ease;
+}
+.voice-toggle:hover {
+  transform: scale(1.1);
+}
+
   </style>
 </head>
+
 <body>
-  <div class="chatbox">
-    <div class="header">🤖 MalawBot</div>
-    <div class="messages" id="messages"></div>
-    <div class="input-area">
-      <input type="text" id="userInput" placeholder="Ex: Ce message Wave est-il vrai ?" />
-      <button onclick="sendMessage()">Envoyer</button>
+  <div class="page-bg">
+    <div class="container">
+      <div class="chatbox">
+
+        <!-- Menu latéral -->
+        <div class="side-menu" id="sideMenu">
+          <div class="menu-logo">
+            <img src="logoblanc.png" alt="Logo Malaw Sécurity">
+          </div>
+          <a href="user.html">🏠 Accueil</a>
+          <a href="scan.html">📷 Scanner SMS</a>
+          <a href="report.html">📢 Signaler</a>
+          <a href="malawbot.html">🤖 MalawBot</a>
+          <a href="quiz.html">🧠 Quiz</a>
+        </div>
+
+        <!-- Boutons et barre -->
+        <div class="top-bar"></div>
+        <button class="menu-btn" id="menuBtn">
+          <div></div><div></div><div></div>
+        </button>
+    
+
+        <div class="header">🤖 MalawBot</div>
+        <div class="messages" id="messages"></div>
+
+        <div class="input-area">
+          <input type="text" id="userInput" placeholder="Ex: Ce message Wave est-il vrai ?" />
+          <button onclick="sendMessage()">Envoyer</button>
+        </div>
+         <button class="voice-toggle" id="voiceToggle">🔊</button>
+      </div>
     </div>
   </div>
 
   <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    menuBtn.addEventListener('click', () => {
+      sideMenu.classList.toggle('active');
+    });
+
     const messages = document.getElementById("messages");
+    let voiceEnabled = true;
 
     function appendMessage(text, sender) {
       const msg = document.createElement("div");
@@ -38,7 +272,8 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
-    appendMessage("Sama xarit 👋 ! Je suis MalawBot, ton ami cybersécurité. Envoie-moi un SMS suspect ou une question !", "bot");
+    appendMessage("Sama xarit 👋 ! Je suis MalawBot, ton ami cybersécurité.", "bot");
+    speak("Sama xarit ! Je suis MalawBot, ton ami cybersécurité.");
 
     function sendMessage() {
       const input = document.getElementById("userInput");
@@ -54,20 +289,32 @@
       let response = "";
 
       if (text.includes("wave") || text.includes("argent") || text.includes("gagne")) {
-        response = "⚠️ Ce message semble une arnaque de type *Wave fake promo*. Les vrais messages Wave viennent du code court 1443. Ne clique jamais sur un lien inconnu.";
-      } 
-      else if (text.includes("bonjour") || text.includes("salut")) {
-        response = "Salam 👋 ! Naka nga def ? Je suis là pour t’aider à repérer les scams. Envoie-moi un SMS suspect.";
-      }
-      else if (text.includes("arnaque") || text.includes("scam")) {
-        response = "Une arnaque, c’est quand quelqu’un cherche à te tromper pour avoir ton argent ou tes infos. Si tu veux, je peux t’aider à reconnaître les signes !";
-      }
-      else {
-        response = "Hmm 🤔 je ne suis pas sûr. Peux-tu me donner plus de détails ou me copier le message exact ?";
+        response = "⚠️ Ce message semble une arnaque Wave fake promo.";
+      } else if (text.includes("bonjour") || text.includes("salut")) {
+        response = "Salam 👋 ! Naka nga def ?";
+      } else {
+        response = "Hmm 🤔 je ne suis pas sûr. Peux-tu me donner plus de détails ?";
       }
 
       appendMessage(response, "bot");
+      speak(response);
     }
+
+    function speak(text) {
+      if (!voiceEnabled || !('speechSynthesis' in window)) return;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'fr-FR';
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+
+    const voiceToggle = document.getElementById("voiceToggle");
+    voiceToggle.addEventListener("click", () => {
+      voiceEnabled = !voiceEnabled;
+      voiceToggle.textContent = voiceEnabled ? "🔊" : "🔇";
+    });
   </script>
 </body>
 </html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malaw Security - Mode Utilisateur</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* === Barre de menu === */
+    .menu-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .menu-btn div {
+      width: 28px;
+      height: 3px;
+      background: #14202A;
+      margin: 5px 0;
+      border-radius: 3px;
+      transition: 0.4s;
+    }
+
+    /* === Menu latéral === */
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -240px;
+      width: 240px;
+      height: 100%;
+      background: linear-gradient(180deg,#1a2634,#27384a);
+      box-shadow: 4px 0 18px rgba(0,0,0,0.2);
+      padding-top: 20px;
+      transition: 0.4s ease;
+      z-index: 4;
+      border-radius: 0 16px 16px 0;
+      overflow-y: auto;
+    }
+
+    .side-menu.active { left: 0; }
+
+    .side-menu .menu-logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .side-menu .menu-logo img {
+      width: 120px;
+      height: auto;
+      opacity: 0.9;
+    }
+
+    .side-menu a {
+      display: block;
+      color: white;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: background 0.2s ease;
+    }
+
+    .side-menu a:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* === Logo principal === */
+    .logo-wrapper { transition: opacity 0.3s ease; }
+    .logo-hidden { opacity: 0; pointer-events: none; }
+
+    /* === Contenu central === */
+    .welcome-text {
+      margin-top: 30px;
+      color: #14202A;
+      font-family: 'Merriweather', serif;
+      font-size: 20px;
+      padding: 0 10px;
+    }
+    .intro-text {
+      font-size: 14px;
+      color: rgba(0,0,0,0.7);
+      margin-top: 8px;
+      padding: 0 16px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-bg">
+    <div class="container">
+      <div class="phone-frame">
+
+        <!-- === Bouton menu === -->
+        <button class="menu-btn" id="menuBtn" aria-label="Ouvrir le menu">
+          <div></div>
+          <div></div>
+          <div></div>
+        </button>
+
+        <!-- === Zone de chargement du menu === -->
+        <div id="menuContainer"></div>
+
+        <!-- === Logo principal === -->
+        <div class="logo-wrapper" id="logoWrapper">
+          <img src="logo.png" alt="Malaw Security Logo" class="logo-image">
+        </div>
+
+        <!-- === Contenu principal === -->
+        <header class="phone-header">
+          <h2>Bienvenue sur Malaw Security</h2>
+        </header>
+
+        <main class="phone-body">
+          <p class="welcome-text">Xoolal sa sécurité numérique ! 🔒</p>
+          <p class="intro-text">
+            Explore nos outils : scanne tes SMS suspects, signale une menace, 
+            discute avec MalawBot, ou teste-toi avec nos quiz cybersécurité.
+          </p>
+          <button class="btn-green" onclick="window.location.href='scan.html'">
+            Commencer
+          </button>
+        </main>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const logoWrapper = document.getElementById('logoWrapper');
+    let sideMenu;
+
+    // Charger dynamiquement le menu depuis includes/menu.html
+    fetch('includes/menu.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('menuContainer').innerHTML = html;
+        sideMenu = document.querySelector('.side-menu');
+
+        // Activer le toggle après le chargement
+        menuBtn.addEventListener('click', () => {
+          sideMenu.classList.toggle('active');
+          logoWrapper.classList.toggle('logo-hidden');
+        });
+      });
+  </script>
+</body>
+</html>

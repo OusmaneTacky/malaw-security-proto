@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>MalawBot - Assistant IA Malaw Sécurity</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background:#f3f8fc; margin:0; padding:0; display:flex; justify-content:center; align-items:center; height:100vh; }
+    .chatbox { width:380px; background:white; border-radius:16px; box-shadow:0 4px 15px rgba(0,0,0,0.15); display:flex; flex-direction:column; overflow:hidden; }
+    .header { background:#0077cc; color:white; padding:12px; font-weight:600; text-align:center; }
+    .messages { flex:1; padding:12px; overflow-y:auto; }
+    .msg { margin-bottom:10px; max-width:85%; padding:10px 14px; border-radius:14px; line-height:1.4; }
+    .user { background:#e6f2ff; align-self:flex-end; }
+    .bot { background:#f0f0f0; align-self:flex-start; }
+    .input-area { display:flex; padding:10px; background:#fafafa; border-top:1px solid #ddd; }
+    .input-area input { flex:1; border:none; padding:10px; border-radius:8px; font-size:14px; }
+    .input-area button { background:#0077cc; color:white; border:none; padding:10px 14px; border-radius:8px; margin-left:8px; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <div class="chatbox">
+    <div class="header">🤖 MalawBot</div>
+    <div class="messages" id="messages"></div>
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="Ex: Ce message Wave est-il vrai ?" />
+      <button onclick="sendMessage()">Envoyer</button>
+    </div>
+  </div>
+
+  <script>
+    const messages = document.getElementById("messages");
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("msg", sender);
+      msg.textContent = text;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    appendMessage("Sama xarit 👋 ! Je suis MalawBot, ton ami cybersécurité. Envoie-moi un SMS suspect ou une question !", "bot");
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const userText = input.value.trim();
+      if (!userText) return;
+      appendMessage(userText, "user");
+      input.value = "";
+      setTimeout(() => respond(userText), 600);
+    }
+
+    function respond(text) {
+      text = text.toLowerCase();
+      let response = "";
+
+      if (text.includes("wave") || text.includes("argent") || text.includes("gagne")) {
+        response = "⚠️ Ce message semble une arnaque de type *Wave fake promo*. Les vrais messages Wave viennent du code court 1443. Ne clique jamais sur un lien inconnu.";
+      } 
+      else if (text.includes("bonjour") || text.includes("salut")) {
+        response = "Salam 👋 ! Naka nga def ? Je suis là pour t’aider à repérer les scams. Envoie-moi un SMS suspect.";
+      }
+      else if (text.includes("arnaque") || text.includes("scam")) {
+        response = "Une arnaque, c’est quand quelqu’un cherche à te tromper pour avoir ton argent ou tes infos. Si tu veux, je peux t’aider à reconnaître les signes !";
+      }
+      else {
+        response = "Hmm 🤔 je ne suis pas sûr. Peux-tu me donner plus de détails ou me copier le message exact ?";
+      }
+
+      appendMessage(response, "bot");
+    }
+  </script>
+</body>
+</html>

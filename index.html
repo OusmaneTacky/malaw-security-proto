@@ -11,7 +11,7 @@
   <style>
 @font-face {
   font-family: 'Astro Space';
-  src: url('../assets/fonts/AstroSpace-1.otf') format('truetype');
+  src: url('../assets/fonts/AstroSpace-1.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
@@ -31,7 +31,7 @@
       color: var(--text-color);
     }
 
-    /* 🎆 Fond animé en particules */
+    /*Fond animé en particules */
     canvas#particles {
       position: fixed;
       top: 0;
@@ -139,7 +139,7 @@
   <audio id="typeSound" src="https://assets.mixkit.co/sfx/download/mixkit-typewriter-soft-hit-1360.wav" preload="auto"></audio>
 
   <script>
-    /************* 🔤 Animation texte avec son *************/
+    /************* Animation texte avec son *************/
     const textElement = document.getElementById("typedText");
     const typeSound = document.getElementById("typeSound");
 
@@ -168,7 +168,7 @@
       }, 1000);
     }
 
-    /************* 🌌 Fond particules animé *************/
+    /*************Fond particules animé *************/
     const canvas = document.getElementById("particles");
     const ctx = canvas.getContext("2d");
     let particles = [];

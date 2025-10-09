@@ -92,6 +92,7 @@
 
   <script>
     const tbody = document.getElementById("alertesBody");
+
     const alertes = JSON.parse(localStorage.getItem("alertes") || "[]");
 
     // Exemples par défaut (si aucune alerte enregistrée)
@@ -129,6 +130,14 @@
 ];
 
     ];
+const alertesExistantes = JSON.parse(localStorage.getItem("alertes") || "[]");
+const toutesAlertes = [...alertesExistantes, ...exemples];
+
+// Éviter les doublons basés sur la description
+const uniques = toutesAlertes.filter(
+  (a, i, self) => i === self.findIndex(t => t.description === a.description)
+);
+localStorage.setItem("alertes", JSON.stringify(uniques));
 
     const allAlertes = [...alertes, ...exemples]; // nouvelles d’abord
 

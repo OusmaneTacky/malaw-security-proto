@@ -96,9 +96,38 @@
 
     // Exemples par défaut (si aucune alerte enregistrée)
     const exemples = [
-      { date: "07/10/2025", localisation: "Région de Dakar", description: "Faux message Orange Money", statut: "En cours" },
-      { date: "06/10/2025", localisation: "Région de Thiès", description: "Campagne phishing “iPhone 17”", statut: "Résolu" },
-      { date: "05/10/2025", localisation: "Région de Kaolack", description: "Arnaque sur livraison Wave", statut: "Nouveau" }
+  { date: "08/10/2025", localisation: "Région de Dakar", description: "Tentative de phishing via message Wave 'Compte suspendu'", statut: "En cours", categorie: "Phishing" },
+  { date: "08/10/2025", localisation: "Région de Thiès", description: "Faux concours ‘Gagnez un iPhone 17 Pro’ sur WhatsApp", statut: "Nouveau", categorie: "Escroquerie" },
+  { date: "07/10/2025", localisation: "Région de Kaolack", description: "Lien frauduleux imitant Free Sénégal", statut: "Résolu", categorie: "Phishing" },
+  { date: "07/10/2025", localisation: "Région de Dakar", description: "Faux agent demandant un code Orange Money", statut: "En cours", categorie: "Vishing" },
+  { date: "06/10/2025", localisation: "Région de Saint-Louis", description: "Campagne de phishing sur Facebook 'Wave Assistance'", statut: "Nouveau", categorie: "Phishing" },
+  { date: "06/10/2025", localisation: "Région de Ziguinchor", description: "SMS prétendant offrir 100 000 FCFA de crédit", statut: "Résolu", categorie: "Spam SMS" },
+  { date: "06/10/2025", localisation: "Région de Dakar", description: "Escroquerie via faux compte WhatsApp de la SENELEC", statut: "Nouveau", categorie: "Escroquerie" },
+  { date: "05/10/2025", localisation: "Région de Louga", description: "Message frauduleux ‘Mise à jour de votre compte bancaire’", statut: "En cours", categorie: "Phishing" },
+  { date: "05/10/2025", localisation: "Région de Thiès", description: "Tentative de vol de code Wave via lien raccourci", statut: "Résolu", categorie: "Phishing" },
+  { date: "05/10/2025", localisation: "Région de Fatick", description: "Faux message d’aide humanitaire demandant des frais", statut: "En cours", categorie: "Escroquerie" },
+  { date: "04/10/2025", localisation: "Région de Dakar", description: "Lien suspect imitant le site de la Poste", statut: "Nouveau", categorie: "Phishing" },
+  { date: "04/10/2025", localisation: "Région de Kolda", description: "Faux appel demandant de confirmer un transfert Orange Money", statut: "Résolu", categorie: "Vishing" },
+  { date: "03/10/2025", localisation: "Région de Diourbel", description: "Arnaque via message Messenger ‘Aide du gouvernement’", statut: "En cours", categorie: "Escroquerie" },
+  { date: "03/10/2025", localisation: "Région de Thiès", description: "Escroquerie via faux profil d’agence de voyage", statut: "Nouveau", categorie: "Fraude à la livraison" },
+  { date: "03/10/2025", localisation: "Région de Dakar", description: "Campagne d’hameçonnage ciblant les utilisateurs Wave", statut: "Résolu", categorie: "Phishing" },
+  { date: "02/10/2025", localisation: "Région de Tambacounda", description: "Lien malveillant diffusé sur groupe WhatsApp ‘Aide financière’", statut: "En cours", categorie: "Spam SMS" },
+  { date: "02/10/2025", localisation: "Région de Saint-Louis", description: "Faux message annonçant un bonus Orange Money", statut: "Nouveau", categorie: "Phishing" },
+  { date: "02/10/2025", localisation: "Région de Dakar", description: "Fausse application mobile ‘Wave Secure’ détectée", statut: "Résolu", categorie: "Cyberattaque" },
+  { date: "01/10/2025", localisation: "Région de Fatick", description: "Tentative d’escroquerie via SMS 'Crédit gratuit Sonatel'", statut: "En cours", categorie: "Spam SMS" },
+  { date: "01/10/2025", localisation: "Région de Thiès", description: "Page web trompeuse imitant Wave Business", statut: "En cours", categorie: "Phishing" },
+  { date: "30/09/2025", localisation: "Région de Dakar", description: "Faux service client demandant une vérification d’identité", statut: "Nouveau", categorie: "Vishing" },
+  { date: "30/09/2025", localisation: "Région de Kaolack", description: "Arnaque ‘Investissement rapide’ par Telegram", statut: "Résolu", categorie: "Escroquerie" },
+  { date: "29/09/2025", localisation: "Région de Louga", description: "Lien frauduleux promettant un bonus internet", statut: "En cours", categorie: "Phishing" },
+  { date: "29/09/2025", localisation: "Région de Dakar", description: "Tentative d’hameçonnage sur Messenger ‘Gagne ton crédit’", statut: "Résolu", categorie: "Phishing" },
+  { date: "28/09/2025", localisation: "Région de Diourbel", description: "Fausse publicité ‘Wave double ton argent’", statut: "En cours", categorie: "Escroquerie" },
+  { date: "28/09/2025", localisation: "Région de Ziguinchor", description: "Faux message sur tirage Wave hebdomadaire", statut: "Nouveau", categorie: "Spam SMS" },
+  { date: "27/09/2025", localisation: "Région de Dakar", description: "Campagne d’arnaque ciblant les vendeurs Jumia", statut: "En cours", categorie: "Fraude à la livraison" },
+  { date: "26/09/2025", localisation: "Région de Thiès", description: "Lien suspect redirigeant vers une fausse app Orange", statut: "Résolu", categorie: "Phishing" },
+  { date: "26/09/2025", localisation: "Région de Kolda", description: "Escroquerie par SMS annonçant un gain Wave", statut: "En cours", categorie: "Spam SMS" },
+  { date: "25/09/2025", localisation: "Région de Tambacounda", description: "Faux message ‘Aide scolaire de l’État’ diffusé sur WhatsApp", statut: "Nouveau", categorie: "Phishing" }
+];
+
     ];
 
     const allAlertes = [...alertes, ...exemples]; // nouvelles d’abord

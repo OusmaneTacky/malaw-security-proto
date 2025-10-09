@@ -114,7 +114,7 @@ body {
 /* ====== Partie droite ====== */
 .main-content {
   flex: 1;
-  background: url("background.png") center/cover no-repeat;
+  background: url("gesec.png") center/cover no-repeat;
   display: flex;
   flex-direction: column;
   justify-content: center;

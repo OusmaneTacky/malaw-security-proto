@@ -89,9 +89,9 @@
 
       <nav>
         <ul>
-          <li><a href="admin.html"><img src="icons/sn.png" alt="Heatmap">Accueil</a></li>
-          <li><a href="heatmap.html"><img src="icons/alert.png" alt="Heatmap">Alertes</a></li>
-          <li><a href="stats.html"><img src="icons/stats.png" alt="Stats">Stats</a></li>
+          <li><a href="heatmap.html"><img src="icons/sn.png" alt="Heatmap Icon">Accueil</a></li>
+          <li><a href="alertes.html"><img src="icons/alert.png" alt="Alertes Icon">Alertes</a></li>
+          <li><a href="stats.html"><img src="icons/stats.png" alt="Stats Icon">Stats</a></li>
         </ul>
       </nav>
     </aside>
@@ -112,9 +112,7 @@
       </table>
     </main>
   </div>
-
 <script>
-  // 🕒 Mise à jour dynamique de la date et l’heure
   function updateDateTime() {
     const now = new Date();
     document.getElementById("date").textContent = now.toLocaleDateString("fr-FR");
@@ -125,8 +123,8 @@
 
   const tbody = document.getElementById("alertesBody");
 
-  // ✅ Liste d'alertes locales 
-   const alertes = [
+  // ✅ Liste d’alertes locales (renommée ici pour éviter conflit)
+  const alertesLocales = [
   { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau", categorie: "Phishing" },
   { date: "09/10/2025 08:14:30", localisation: "Région de Saint-Louis", description: "Faux message d’aide financière diffusé sur WhatsApp", statut: "En cours", categorie: "Escroquerie" },
   { date: "09/10/2025 09:05:12", localisation: "Région de Dakar", description: "Lien frauduleux promettant un bonus Wave", statut: "Résolu", categorie: "Spam SMS" },
@@ -199,7 +197,7 @@
   { date: "09/10/2025 22:25:44", localisation: "Région de Dakar", description: "Tentative de piratage sur le réseau Wi-Fi public", statut: "Nouveau", categorie: "Intrusion" },
   { date: "09/10/2025 22:46:09", localisation: "Région de Saint-Louis", description: "Faux mail de remboursement PayPal détecté", statut: "En cours", categorie: "Phishing" },
   { date: "09/10/2025 23:05:23", localisation: "Région de Dakar", description: "Fausse publicité promettant des prêts instantanés", statut: "Résolu", categorie: "Escroquerie" }
-];
+  ];
 
   function getStatusClass(statut) {
     switch (statut.toLowerCase()) {
@@ -210,9 +208,9 @@
     }
   }
 
-  function afficherAlertes(alertes) {
+  function afficherAlertes(liste) {
     tbody.innerHTML = "";
-    alertes.forEach(a => {
+    liste.forEach(a => {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${a.date}</td>
@@ -226,49 +224,49 @@
 
   async function chargerAlertes() {
     try {
-      // 1️⃣ Récupération du localStorage
+      // 1️⃣ Récupération depuis le localStorage
       let alertes = JSON.parse(localStorage.getItem("alertes")) || [];
 
-      // 2️⃣ Chargement du fichier alertes.json si disponible
+      // 2️⃣ Chargement du fichier alertes.json (facultatif)
       try {
         const response = await fetch("alertes.json");
         if (response.ok) {
           const data = await response.json();
           alertes = [...alertes, ...data];
         }
-      } catch (e) {
+      } catch {
         console.warn("Aucun fichier alertes.json trouvé (pas bloquant)");
       }
 
       // 3️⃣ Fusion avec les alertes locales
       alertes = [...alertes, ...alertesLocales];
 
-      // 4️⃣ Suppression des doublons (date + description)
+      // 4️⃣ Suppression des doublons
       const uniques = alertes.filter(
-        (a, index, self) =>
-          index === self.findIndex(
-            b => b.date === a.date && b.description === a.description
-          )
+        (a, i, self) =>
+          i === self.findIndex(b => b.date === a.date && b.description === a.description)
       );
 
       // 5️⃣ Tri par date décroissante
-      uniques.sort((a, b) => new Date(b.date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3")) - new Date(a.date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3")));
+      uniques.sort((a, b) =>
+        new Date(b.date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3")) -
+        new Date(a.date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3"))
+      );
 
-      // 6️⃣ Sauvegarde dans localStorage
+      // 6️⃣ Sauvegarde
       localStorage.setItem("alertes", JSON.stringify(uniques));
 
       // 7️⃣ Affichage
       afficherAlertes(uniques);
-
     } catch (error) {
-      console.error("Erreur de chargement :", error);
+      console.error("Erreur :", error);
       afficherAlertes(alertesLocales);
     }
   }
 
-  // Lancement
   chargerAlertes();
 </script>
+
 
 </body>
 </html>

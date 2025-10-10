@@ -112,6 +112,7 @@
       </table>
     </main>
   </div>
+
 <script>
   function updateDateTime() {
     const now = new Date();
@@ -123,9 +124,9 @@
 
   const tbody = document.getElementById("alertesBody");
 
-  // ✅ Liste d’alertes locales (renommée ici pour éviter conflit)
+  // ✅ Liste d’alertes locales
   const alertesLocales = [
-  { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau", categorie: "Phishing" },
+ { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau", categorie: "Phishing" },
   { date: "09/10/2025 08:14:30", localisation: "Région de Saint-Louis", description: "Faux message d’aide financière diffusé sur WhatsApp", statut: "En cours", categorie: "Escroquerie" },
   { date: "09/10/2025 09:05:12", localisation: "Région de Dakar", description: "Lien frauduleux promettant un bonus Wave", statut: "Résolu", categorie: "Spam SMS" },
   { date: "08/10/2025", localisation: "Région de Dakar", description: "Tentative de phishing via message Wave 'Compte suspendu'", statut: "En cours", categorie: "Phishing" },
@@ -266,7 +267,6 @@
 
   chargerAlertes();
 </script>
-
 
 </body>
 </html>

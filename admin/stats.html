@@ -2,48 +2,87 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Stats - Malaw Security</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statistiques – Malaw Security</title>
+
+  <!-- Polices et fichiers CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
   <link rel="stylesheet" href="stats.css">
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="stats-page">
-  <div class="sidebar">
-    <h1 class="logo">Malaw<br>Security</h1>
-    <nav>
-      <a href="heatmap.html" class="menu-btn">🌍 Heatmap</a>
-      <a href="alertes.html" class="menu-btn">🚨 Alertes</a>
-      <a href="stats.html" class="menu-btn active">📈 Stats</a>
-    </nav>
+<body>
+  <div class="admin-container">
+    <!-- ====== SIDEBAR IDENTIQUE ====== -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <img src="logopetit.png" alt="Logo Malaw Security" class="logo">
+      </div>
+
+      <div class="datetime">
+        <div id="date"></div>
+        <div id="time"></div>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="admin.html"><img src="icons/sn.png" alt="Accueil">Accueil</a></li>
+          <li><a href="alertes.html"><img src="icons/alert.png" alt="Alertes">Alertes</a></li>
+          <li><a href="heatmap.html"><img src="icons/heatmap.png" alt="Heatmap">Heatmap</a></li>
+          <li><a href="stats.html" class="active"><img src="icons/stats.png" alt="Stats">Stats</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- ====== CONTENU PRINCIPAL ====== -->
+    <main class="main-content">
+      <header class="stats-header">
+        <h2>📊 Statistiques générales</h2>
+        <div class="header-controls">
+          <select id="viewSelector">
+            <option value="type">Par type de menace</option>
+            <option value="region">Par région</option>
+            <option value="statut">Par statut</option>
+          </select>
+          <p class="date-info">Mise à jour : <span id="dateNow"></span></p>
+        </div>
+      </header>
+
+      <div class="chart-container">
+        <canvas id="statsChart"></canvas>
+      </div>
+    </main>
   </div>
 
-  <div class="main-content">
-    <header>
-      <h2>📊 Statistiques générales</h2>
-      <select id="viewSelector">
-        <option value="type">Par type de menace</option>
-        <option value="region">Par région</option>
-        <option value="statut">Par statut</option>
-      </select>
-      <p class="date-info">Mise à jour : <span id="dateNow"></span></p>
-    </header>
-
-    <div class="chart-container">
-      <canvas id="statsChart"></canvas>
-    </div>
-  </div>
-
+  <!-- ====== SCRIPT ====== -->
   <script>
+    // ✅ DATE + HEURE (identique à admin)
+    function updateDateTime() {
+      const now = new Date();
+      const jour = String(now.getDate()).padStart(2, "0");
+      const mois = String(now.getMonth() + 1).padStart(2, "0");
+      const annee = now.getFullYear();
+      const heures = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const secondes = String(now.getSeconds()).padStart(2, "0");
+
+      document.getElementById("date").textContent = `${jour}/${mois}/${annee}`;
+      document.getElementById("time").textContent = `${heures}:${minutes}:${secondes}`;
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    // ✅ GÉNÉRATION DU GRAPHIQUE
     const ctx = document.getElementById("statsChart");
     const dateNow = document.getElementById("dateNow");
     const viewSelector = document.getElementById("viewSelector");
+    dateNow.textContent = new Date().toLocaleDateString("fr-FR");
 
-    dateNow.textContent = new Date().toLocaleDateString();
-
-    // Charger les alertes depuis le localStorage
     const alertes = JSON.parse(localStorage.getItem("alertes") || "[]");
 
-    // Regroupement par clé
     function groupBy(arr, key) {
       return arr.reduce((acc, obj) => {
         const value = obj[key] || "Non spécifié";
@@ -52,7 +91,6 @@
       }, {});
     }
 
-    // Extraire la région depuis localisation (ex: "Dakar, Sénégal" => "Dakar")
     function extractRegion(localisation) {
       if (!localisation) return "Non précisée";
       return localisation.split(",")[0];
@@ -63,8 +101,8 @@
       if (view === "type") {
         grouped = groupBy(alertes, "categorie");
       } else if (view === "region") {
-        const data = alertes.map(a => extractRegion(a.localisation));
-        grouped = groupBy(data.map(v => ({ region: v })), "region");
+        const regions = alertes.map(a => extractRegion(a.localisation));
+        grouped = groupBy(regions.map(r => ({ region: r })), "region");
       } else {
         grouped = groupBy(alertes, "statut");
       }
@@ -74,7 +112,6 @@
     }
 
     let chart;
-
     function updateChart(view) {
       const { labels, values } = prepareData(view);
       if (chart) chart.destroy();
@@ -95,10 +132,7 @@
         options: {
           responsive: true,
           scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { stepSize: 1 }
-            }
+            y: { beginAtZero: true, ticks: { stepSize: 1 } }
           },
           plugins: {
             legend: { display: false },
@@ -116,7 +150,7 @@
     }
 
     viewSelector.addEventListener("change", e => updateChart(e.target.value));
-    updateChart("type"); // par défaut
+    updateChart("type");
   </script>
 </body>
 </html>

@@ -2,101 +2,144 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alertes - Malaw Security</title>
+
+  <!-- Polices et styles partagés -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css"> 
+
   <style>
-    body.alertes-page {
+    .admin-container {
+      display: flex;
+      min-height: 100vh;
       background-color: #001b2e;
       color: white;
       font-family: "Poppins", sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
     }
 
-    .page-content {
-      margin-top: 40px;
-      width: 90%;
-      max-width: 1000px;
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      overflow-x: auto;
     }
 
-    h2 {
-      text-align: center;
-      color: #b8d9ff;
+    h1 {
       font-family: "Orbitron", sans-serif;
-      margin-bottom: 30px;
+      color: #b8d9ff;
+      margin-bottom: 25px;
+      text-align: center;
     }
 
-    .alert-table {
+    table {
       width: 100%;
       border-collapse: collapse;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
     }
 
-    .alert-table th, .alert-table td {
-      padding: 14px 16px;
+    th, td {
+      padding: 14px 18px;
       text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .alert-table thead {
-      background: rgba(0, 50, 80, 0.8);
+    th {
+      background: rgba(0, 90, 130, 0.5);
+      color: #b8d9ff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    .alert-table tbody tr:nth-child(even) {
-      background: rgba(255,255,255,0.05);
+    tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.04);
     }
 
     .status {
-      padding: 5px 10px;
+      padding: 6px 12px;
       border-radius: 8px;
       font-weight: bold;
       color: white;
     }
 
-    .status.new {
-      background: #2196f3;
-    }
+    .status.new { background: #2196f3; }
+    .status.pending { background: #ff9800; }
+    .status.resolved { background: #4caf50; }
 
-    .status.pending {
-      background: #ff9800;
-    }
-
-    .status.resolved {
-      background: #4caf50;
+    @media (max-width: 768px) {
+      th, td { font-size: 13px; padding: 10px; }
     }
   </style>
 </head>
-<body class="alertes-page">
-  <div class="page-content">
-    <h2>🚨 Alertes récentes</h2>
-    <table class="alert-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Localisation</th>
-          <th>Description</th>
-          <th>Statut</th>
-        </tr>
-      </thead>
-      <tbody id="alertesBody">
-        <!-- Les alertes locales seront ajoutées ici -->
-      </tbody>
-    </table>
+<body>
+
+  <div class="admin-container">
+    <aside class="sidebar">
+      <div class="logo-container">
+        <img src="logopetit.png" alt="Logo Malaw Security" class="logo">
+      </div>
+
+      <div class="datetime">
+        <div id="date"></div>
+        <div id="time"></div>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="heatmap.html"><img src="icons/heatmap.png" alt="Heatmap Icon">Heatmap</a></li>
+          <li><a href="alertes.html"><img src="icons/alert.png" alt="Alertes Icon">Alertes</a></li>
+          <li><a href="stats.html"><img src="icons/stats.png" alt="Stats Icon">Stats</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <h1>🚨 Alertes récentes</h1>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Localisation</th>
+            <th>Description</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="alertesBody"></tbody>
+      </table>
+    </main>
   </div>
 
-  <script>
-    const tbody = document.getElementById("alertesBody");
+<script>
+  // 🕒 Mise à jour dynamique de la date et l’heure
+  function updateDateTime() {
+    const now = new Date();
+    document.getElementById("date").textContent = now.toLocaleDateString("fr-FR");
+    document.getElementById("time").textContent = now.toLocaleTimeString("fr-FR");
+  }
+  setInterval(updateDateTime, 1000);
+  updateDateTime();
 
-    const alertes = JSON.parse(localStorage.getItem("alertes") || "[]");
+  const tbody = document.getElementById("alertesBody");
 
-    // Exemples par défaut (si aucune alerte enregistrée)
-    const exemples = [
+  // ✅ Liste d'alertes locales (commence ici, tu peux ajouter la suite)
+  const alertesLocales = [
+    { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau", categorie: "Phishing" },
+    { date: "09/10/2025 08:14:30", localisation: "Région de Saint-Louis", description: "Faux message d’aide financière diffusé sur WhatsApp", statut: "En cours", categorie: "Escroquerie" },
+    { date: "09/10/2025 09:05:12", localisation: "Région de Dakar", description: "Lien frauduleux promettant un bonus Wave", statut: "Résolu", categorie: "Spam SMS" },
+    { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau", categorie: "Phishing" },
+    { date: "09/10/2025 08:14:30", localisation: "Région de Saint-Louis", description: "Faux message d’aide financière diffusé sur WhatsApp", statut: "En cours", categorie: "Escroquerie" },
+    { date: "09/10/2025 09:05:12", localisation: "Région de Dakar", description: "Lien frauduleux promettant un bonus Wave", statut: "Résolu", categorie: "Spam SMS" },
+    { date: "08/10/2025", localisation: "Région de Dakar", description: "Tentative de phishing via message Wave 'Compte suspendu'", statut: "En cours", categorie: "Phishing" },
+    { date: "08/10/2025", localisation: "Région de Thiès", description: "Faux concours ‘Gagnez un iPhone 17 Pro’ sur WhatsApp", statut: "Nouveau", categorie: "Escroquerie" },
+    { date: "07/10/2025", localisation: "Région de Kaolack", description: "Lien frauduleux imitant Free Sénégal", statut: "Résolu", categorie: "Phishing" },
+    { date: "07/10/2025", localisation: "Région de Dakar", description: "Faux agent demandant un code Orange Money", statut: "En cours", categorie: "Vishing" },
+    { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau", categorie: "Phishing" },
+  { date: "09/10/2025 08:14:30", localisation: "Région de Saint-Louis", description: "Faux message d’aide financière diffusé sur WhatsApp", statut: "En cours", categorie: "Escroquerie" },
+  { date: "09/10/2025 09:05:12", localisation: "Région de Dakar", description: "Lien frauduleux promettant un bonus Wave", statut: "Résolu", categorie: "Spam SMS" },
   { date: "08/10/2025", localisation: "Région de Dakar", description: "Tentative de phishing via message Wave 'Compte suspendu'", statut: "En cours", categorie: "Phishing" },
   { date: "08/10/2025", localisation: "Région de Thiès", description: "Faux concours ‘Gagnez un iPhone 17 Pro’ sur WhatsApp", statut: "Nouveau", categorie: "Escroquerie" },
   { date: "07/10/2025", localisation: "Région de Kaolack", description: "Lien frauduleux imitant Free Sénégal", statut: "Résolu", categorie: "Phishing" },
@@ -126,59 +169,64 @@
   { date: "27/09/2025", localisation: "Région de Dakar", description: "Campagne d’arnaque ciblant les vendeurs Jumia", statut: "En cours", categorie: "Fraude à la livraison" },
   { date: "26/09/2025", localisation: "Région de Thiès", description: "Lien suspect redirigeant vers une fausse app Orange", statut: "Résolu", categorie: "Phishing" },
   { date: "26/09/2025", localisation: "Région de Kolda", description: "Escroquerie par SMS annonçant un gain Wave", statut: "En cours", categorie: "Spam SMS" },
-  { date: "25/09/2025", localisation: "Région de Tambacounda", description: "Faux message ‘Aide scolaire de l’État’ diffusé sur WhatsApp", statut: "Nouveau", categorie: "Phishing" },
- { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau", categorie: "Phishing" },
-{ date: "09/10/2025 08:14:30", localisation: "Région de Saint-Louis", description: "Faux message d’aide financière diffusé sur WhatsApp", statut: "En cours", categorie: "Escroquerie" },
-{ date: "09/10/2025 09:05:12", localisation: "Région de Dakar", description: "Lien frauduleux promettant un bonus Wave", statut: "Résolu", categorie: "Spam SMS" },
-{ date: "09/10/2025 09:22:59", localisation: "Région de Saint-Louis", description: "Tentative de piratage d’un compte institutionnel", statut: "Nouveau", categorie: "Intrusion" },
-{ date: "09/10/2025 10:07:33", localisation: "Région de Dakar", description: "Campagne de mails ‘Aide Tabaski’ contenant un fichier malveillant", statut: "En cours", categorie: "Spam email" },
-{ date: "09/10/2025 10:41:10", localisation: "Région de Saint-Louis", description: "Propagation d’un lien de rançongiciel par email", statut: "Résolu", categorie: "Rançongiciel" },
-{ date: "09/10/2025 11:12:46", localisation: "Région de Dakar", description: "Tentative de phishing via site imitant la SENELEC", statut: "Nouveau", categorie: "Phishing" },
-{ date: "09/10/2025 11:35:28", localisation: "Région de Saint-Louis", description: "Email usurpant la Banque Agricole pour collecter des identifiants", statut: "En cours", categorie: "Vol de données" },
-{ date: "09/10/2025 12:00:19", localisation: "Région de Dakar", description: "Campagne d’appels vocaux frauduleux se faisant passer pour Wave", statut: "Résolu", categorie: "Vishing" },
-{ date: "09/10/2025 12:24:05", localisation: "Région de Saint-Louis", description: "Arnaque à la livraison via fausse boutique Facebook", statut: "Nouveau", categorie: "Fraude livraison" },
-{ date: "09/10/2025 13:08:37", localisation: "Région de Dakar", description: "Intrusion dans un serveur communal non sécurisé", statut: "En cours", categorie: "Intrusion" },
-{ date: "09/10/2025 13:25:11", localisation: "Région de Saint-Louis", description: "Usurpation d’identité d’un agent public sur les réseaux sociaux", statut: "Résolu", categorie: "Escroquerie" },
-{ date: "09/10/2025 14:02:55", localisation: "Région de Dakar", description: "Tentative de cyberattaque sur le site d’une mairie locale", statut: "Nouveau", categorie: "Cyberattaque" },
-{ date: "09/10/2025 14:29:48", localisation: "Région de Saint-Louis", description: "Mail contenant un virus de chiffrement", statut: "En cours", categorie: "Rançongiciel" },
-{ date: "09/10/2025 15:01:36", localisation: "Région de Dakar", description: "Faux trading crypto sur Telegram visant les jeunes", statut: "Résolu", categorie: "Escroquerie" },
-{ date: "09/10/2025 15:17:02", localisation: "Région de Saint-Louis", description: "Campagne de messages diffusant un lien infecté", statut: "Nouveau", categorie: "Spam SMS" },
-{ date: "09/10/2025 15:45:23", localisation: "Région de Dakar", description: "Accès non autorisé détecté sur un serveur universitaire", statut: "En cours", categorie: "Intrusion" },
-{ date: "09/10/2025 16:02:41", localisation: "Région de Saint-Louis", description: "Escroquerie en ligne liée à de fausses offres d’emploi", statut: "Résolu", categorie: "Escroquerie" },
-{ date: "09/10/2025 16:25:57", localisation: "Région de Dakar", description: "Tentative d’hameçonnage ciblant les entreprises locales", statut: "Nouveau", categorie: "Phishing" },
-{ date: "09/10/2025 16:48:22", localisation: "Région de Saint-Louis", description: "Rançongiciel bloquant les fichiers d’une collectivité locale", statut: "En cours", categorie: "Rançongiciel" },
-{ date: "09/10/2025 17:03:14", localisation: "Région de Dakar", description: "Attaque DDoS sur le portail municipal", statut: "Résolu", categorie: "Cyberattaque" },
-{ date: "09/10/2025 17:21:59", localisation: "Région de Saint-Louis", description: "Faux SMS demandant code de vérification bancaire", statut: "Nouveau", categorie: "Spam SMS" },
-{ date: "09/10/2025 17:45:30", localisation: "Région de Dakar", description: "Fuite de données internes d’un service administratif", statut: "En cours", categorie: "Vol de données" },
-{ date: "09/10/2025 18:06:12", localisation: "Région de Saint-Louis", description: "Campagne de mails frauduleux prétendant venir du Trésor public", statut: "Résolu", categorie: "Phishing" },
-{ date: "09/10/2025 18:28:44", localisation: "Région de Dakar", description: "Appels vocaux promettant un gain Wave pour obtenir un code", statut: "Nouveau", categorie: "Vishing" },
-{ date: "09/10/2025 18:49:03", localisation: "Région de Saint-Louis", description: "Tentative d’usurpation d’un compte officiel de la mairie", statut: "En cours", categorie: "Intrusion" },
-{ date: "09/10/2025 19:12:29", localisation: "Région de Dakar", description: "Arnaque téléphonique simulant une livraison bloquée", statut: "Résolu", categorie: "Fraude livraison" },
-{ date: "09/10/2025 19:33:18", localisation: "Région de Saint-Louis", description: "Message diffusé via WhatsApp sur de faux dons alimentaires", statut: "Nouveau", categorie: "Escroquerie" },
-{ date: "09/10/2025 19:56:00", localisation: "Région de Dakar", description: "Spam email avec pièce jointe suspecte", statut: "En cours", categorie: "Spam email" },
-{ date: "09/10/2025 20:15:27", localisation: "Région de Saint-Louis", description: "Intrusion dans un compte mail institutionnel", statut: "Résolu", categorie: "Intrusion" },
-{ date: "09/10/2025 20:32:58", localisation: "Région de Dakar", description: "Tentative de piratage d’un site associatif local", statut: "Nouveau", categorie: "Cyberattaque" },
-{ date: "09/10/2025 20:49:12", localisation: "Région de Saint-Louis", description: "SMS frauduleux promettant un colis DHL", statut: "En cours", categorie: "Fraude livraison" },
-{ date: "09/10/2025 21:03:47", localisation: "Région de Dakar", description: "Diffusion massive d’un malware par email", statut: "Résolu", categorie: "Spam email" },
-{ date: "09/10/2025 21:24:15", localisation: "Région de Saint-Louis", description: "Fausse alerte sécurité incitant à télécharger un fichier", statut: "Nouveau", categorie: "Autre" },
-{ date: "09/10/2025 21:46:50", localisation: "Région de Dakar", description: "Vol de données clients sur une plateforme de e-commerce", statut: "En cours", categorie: "Vol de données" },
-{ date: "09/10/2025 22:02:32", localisation: "Région de Saint-Louis", description: "Spam SMS annonçant un gain fictif d’un concours Wave", statut: "Résolu", categorie: "Spam SMS" },
-{ date: "09/10/2025 22:25:44", localisation: "Région de Dakar", description: "Tentative de piratage sur le réseau Wi-Fi public", statut: "Nouveau", categorie: "Intrusion" },
-{ date: "09/10/2025 22:46:09", localisation: "Région de Saint-Louis", description: "Faux mail de remboursement PayPal détecté", statut: "En cours", categorie: "Phishing" },
-{ date: "09/10/2025 23:05:23", localisation: "Région de Dakar", description: "Fausse publicité promettant des prêts instantanés", statut: "Résolu", categorie: "Escroquerie" },
-    ];
-const alertesExistantes = JSON.parse(localStorage.getItem("alertes") || "[]");
-const toutesAlertes = [...alertesExistantes, ...exemples];
+  { date: "25/09/2025", localisation: "Région de Dakar", description: "Faux message d’erreur Wave demandant un code", statut: "Nouveau", categorie: "Phishing" },
+  { date: "07/10/2025", localisation: "Région de Dakar", description: "Faux message Orange Money", statut: "En cours", categorie: "Phishing" },
+      { date: "06/10/2025", localisation: "Région de Thiès", description: "Campagne phishing “iPhone 17”", statut: "Résolu", categorie: "Phishing" },
+      { date: "05/10/2025", localisation: "Région de Kaolack", description: "Arnaque sur livraison Wave", statut: "Nouveau", categorie: "Escroquerie" },
+      { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau", categorie: "Phishing" },
+      { date: "09/10/2025 08:14:30", localisation: "Région de Saint-Louis", description: "Faux message d’aide financière diffusé sur WhatsApp", statut: "En cours", categorie: "Escroquerie" },
+      { date: "09/10/2025 09:05:12", localisation: "Région de Dakar", description: "Lien frauduleux promettant un bonus Wave", statut: "Résolu", categorie: "Spam SMS" },
+      { date: "09/10/2025 09:22:59", localisation: "Région de Saint-Louis", description: "Tentative de piratage d’un compte institutionnel", statut: "Nouveau", categorie: "Intrusion" },
+      { date: "09/10/2025 10:07:33", localisation: "Région de Dakar", description: "Campagne de mails ‘Aide Tabaski’ contenant un fichier malveillant", statut: "En cours", categorie: "Spam email" },
+      { date: "09/10/2025 10:41:10", localisation: "Région de Saint-Louis", description: "Propagation d’un lien de rançongiciel par email", statut: "Résolu", categorie: "Rançongiciel" },
+      { date: "09/10/2025 11:12:46", localisation: "Région de Dakar", description: "Tentative de phishing via site imitant la SENELEC", statut: "Nouveau", categorie: "Phishing" },
+      { date: "09/10/2025 11:35:28", localisation: "Région de Saint-Louis", description: "Email usurpant la Banque Agricole pour collecter des identifiants", statut: "En cours", categorie: "Vol de données" },
+      { date: "09/10/2025 12:00:19", localisation: "Région de Dakar", description: "Campagne d’appels vocaux frauduleux se faisant passer pour Wave", statut: "Résolu", categorie: "Vishing" },
+      { date: "09/10/2025 12:24:05", localisation: "Région de Saint-Louis", description: "Arnaque à la livraison via fausse boutique Facebook", statut: "Nouveau", categorie: "Fraude à la livraison" },
+      { date: "09/10/2025 13:08:37", localisation: "Région de Dakar", description: "Intrusion dans un serveur communal non sécurisé", statut: "En cours", categorie: "Intrusion" },
+      { date: "09/10/2025 13:25:11", localisation: "Région de Saint-Louis", description: "Usurpation d’identité d’un agent public sur les réseaux sociaux", statut: "Résolu", categorie: "Escroquerie" },
+      { date: "09/10/2025 14:02:55", localisation: "Région de Dakar", description: "Tentative de cyberattaque sur le site d’une mairie locale", statut: "Nouveau", categorie: "Cyberattaque" },
+      { date: "09/10/2025 14:29:48", localisation: "Région de Saint-Louis", description: "Mail contenant un virus de chiffrement", statut: "En cours", categorie: "Rançongiciel" },
+      { date: "09/10/2025 15:01:36", localisation: "Région de Dakar", description: "Faux trading crypto sur Telegram visant les jeunes", statut: "Résolu", categorie: "Escroquerie" },
+      { date: "09/10/2025 15:17:02", localisation: "Région de Saint-Louis", description: "Campagne de messages diffusant un lien infecté", statut: "Nouveau", categorie: "Spam SMS" },
+      { date: "09/10/2025 15:45:23", localisation: "Région de Dakar", description: "Accès non autorisé détecté sur un serveur universitaire", statut: "En cours", categorie: "Intrusion" },
+      { date: "09/10/2025 16:02:41", localisation: "Région de Saint-Louis", description: "Escroquerie en ligne liée à de fausses offres d’emploi", statut: "Résolu", categorie: "Escroquerie" },
+      { date: "09/10/2025 16:25:57", localisation: "Région de Dakar", description: "Tentative d’hameçonnage ciblant les entreprises locales", statut: "Nouveau", categorie: "Phishing" },
+      { date: "09/10/2025 16:48:22", localisation: "Région de Saint-Louis", description: "Rançongiciel bloquant les fichiers d’une collectivité locale", statut: "En cours", categorie: "Rançongiciel" },
+      { date: "09/10/2025 17:03:14", localisation: "Région de Dakar", description: "Attaque DDoS sur le portail municipal", statut: "Résolu", categorie: "Cyberattaque" },
+      { date: "09/10/2025 17:21:59", localisation: "Région de Saint-Louis", description: "Faux SMS demandant code de vérification bancaire", statut: "Nouveau", categorie: "Spam SMS" },
+      { date: "09/10/2025 17:45:30", localisation: "Région de Dakar", description: "Fuite de données internes d’un service administratif", statut: "En cours", categorie: "Vol de données" },
+      { date: "09/10/2025 18:06:12", localisation: "Région de Saint-Louis", description: "Campagne de mails frauduleux prétendant venir du Trésor public", statut: "Résolu", categorie: "Phishing" },
+      { date: "09/10/2025 18:28:44", localisation: "Région de Dakar", description: "Appels vocaux promettant un gain Wave pour obtenir un code", statut: "Nouveau", categorie: "Vishing" },
+      { date: "09/10/2025 18:49:03", localisation: "Région de Saint-Louis", description: "Tentative d’usurpation d’un compte officiel de la mairie", statut: "En cours", categorie: "Intrusion" },
+      { date: "09/10/2025 19:12:29", localisation: "Région de Dakar", description: "Arnaque téléphonique simulant une livraison bloquée", statut: "Résolu", categorie: "Fraude à la livraison" },
+      { date: "09/10/2025 19:33:18", localisation: "Région de Saint-Louis", description: "Message diffusé via WhatsApp sur de faux dons alimentaires", statut: "Nouveau", categorie: "Escroquerie" },
+      { date: "09/10/2025 19:56:00", localisation: "Région de Dakar", description: "Spam email avec pièce jointe suspecte", statut: "En cours", categorie: "Spam email" },
+      { date: "09/10/2025 20:15:27", localisation: "Région de Saint-Louis", description: "Intrusion dans un compte mail institutionnel", statut: "Résolu", categorie: "Intrusion" },
+      { date: "09/10/2025 20:32:58", localisation: "Région de Dakar", description: "Tentative de piratage d’un site associatif local", statut: "Nouveau", categorie: "Cyberattaque" },
+      { date: "09/10/2025 20:49:12", localisation: "Région de Saint-Louis", description: "SMS frauduleux promettant un colis DHL", statut: "En cours", categorie: "Fraude à la livraison" },
+      { date: "09/10/2025 21:03:47", localisation: "Région de Dakar", description: "Diffusion massive d’un malware par email", statut: "Résolu", categorie: "Spam email" },
+      { date: "09/10/2025 21:24:15", localisation: "Région de Saint-Louis", description: "Fausse alerte sécurité incitant à télécharger un fichier", statut: "Nouveau", categorie: "Autre" },
+      { date: "09/10/2025 21:46:50", localisation: "Région de Dakar", description: "Vol de données clients sur une plateforme de e-commerce", statut: "En cours", categorie: "Vol de données" },
+      { date: "09/10/2025 22:02:32", localisation: "Région de Saint-Louis", description: "Spam SMS annonçant un gain fictif d’un concours Wave", statut: "Résolu", categorie: "Spam SMS" },
+      { date: "09/10/2025 22:25:44", localisation: "Région de Dakar", description: "Tentative de piratage sur le réseau Wi-Fi public", statut: "Nouveau", categorie: "Intrusion" },
+      { date: "09/10/2025 22:46:09", localisation: "Région de Saint-Louis", description: "Faux mail de remboursement PayPal détecté", statut: "En cours", categorie: "Phishing" },
+      { date: "09/10/2025 23:05:23", localisation: "Région de Dakar", description: "Fausse publicité promettant des prêts instantanés", statut: "Résolu", categorie: "Escroquerie" }
+    
+  ];
 
-// Éviter les doublons basés sur la description
-const uniques = toutesAlertes.filter(
-  (a, i, self) => i === self.findIndex(t => t.description === a.description)
-);
-localStorage.setItem("alertes", JSON.stringify(uniques));
+  function getStatusClass(statut) {
+    switch (statut.toLowerCase()) {
+      case "en cours": return "pending";
+      case "résolu": return "resolved";
+      case "nouveau": return "new";
+      default: return "new";
+    }
+  }
 
-    const allAlertes = [...alertes, ...exemples]; // nouvelles d’abord
-
-    allAlertes.forEach(a => {
+  function afficherAlertes(alertes) {
+    tbody.innerHTML = "";
+    alertes.forEach(a => {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${a.date}</td>
@@ -188,15 +236,53 @@ localStorage.setItem("alertes", JSON.stringify(uniques));
       `;
       tbody.appendChild(row);
     });
+  }
 
-    function getStatusClass(statut) {
-      switch (statut.toLowerCase()) {
-        case "en cours": return "pending";
-        case "résolu": return "resolved";
-        case "nouveau": return "new";
-        default: return "new";
+  async function chargerAlertes() {
+    try {
+      // 1️⃣ Récupération du localStorage
+      let alertes = JSON.parse(localStorage.getItem("alertes")) || [];
+
+      // 2️⃣ Chargement du fichier alertes.json si disponible
+      try {
+        const response = await fetch("alertes.json");
+        if (response.ok) {
+          const data = await response.json();
+          alertes = [...alertes, ...data];
+        }
+      } catch (e) {
+        console.warn("Aucun fichier alertes.json trouvé (pas bloquant)");
       }
+
+      // 3️⃣ Fusion avec les alertes locales
+      alertes = [...alertes, ...alertesLocales];
+
+      // 4️⃣ Suppression des doublons (date + description)
+      const uniques = alertes.filter(
+        (a, index, self) =>
+          index === self.findIndex(
+            b => b.date === a.date && b.description === a.description
+          )
+      );
+
+      // 5️⃣ Tri par date décroissante
+      uniques.sort((a, b) => new Date(b.date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3")) - new Date(a.date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3")));
+
+      // 6️⃣ Sauvegarde dans localStorage
+      localStorage.setItem("alertes", JSON.stringify(uniques));
+
+      // 7️⃣ Affichage
+      afficherAlertes(uniques);
+
+    } catch (error) {
+      console.error("Erreur de chargement :", error);
+      afficherAlertes(alertesLocales);
     }
-  </script>
+  }
+
+  // Lancement
+  chargerAlertes();
+</script>
+
 </body>
 </html>

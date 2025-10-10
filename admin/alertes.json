@@ -1,0 +1,16 @@
+[
+  {
+    "date": "09/10/2025 17:00:00",
+    "localisation": "Région de Thiès",
+    "description": "Faux site imitant Wave Sénégal",
+    "statut": "Nouveau",
+    "categorie": "Phishing"
+  },
+  {
+    "date": "09/10/2025 17:20:00",
+    "localisation": "Région de Dakar",
+    "description": "Campagne d’arnaque via WhatsApp",
+    "statut": "En cours",
+    "categorie": "Escroquerie"
+  }
+]

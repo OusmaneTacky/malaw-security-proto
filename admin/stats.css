@@ -104,3 +104,39 @@ canvas {
   width: 100% !important;
   height: 400px !important;
 }
+.admin-container {
+  display: flex;
+  height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px 50px;
+  background: radial-gradient(circle at center, #0f2438, #021423);
+}
+
+.sidebar {
+  width: 220px !important;
+  flex-shrink: 0;
+  border-right: 2px solid #093251;
+}
+/* ====== Date & heure ====== */
+.datetime {
+  text-align: center;
+  color: #b8d9ff;
+  font-family: "Orbitron", sans-serif;
+  margin-bottom: 40px;
+  text-shadow: 0 0 6px #00ffff, 0 0 12px #00bcd4;
+  animation: glow 2s infinite alternate;
+}
+
+#date {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+
+#time {
+  font-size: 1.4rem;
+  font-weight: 700;
+}

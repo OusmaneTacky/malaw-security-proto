@@ -1,4 +1,4 @@
-/* ====== Structure générale ====== */
+/* ====== STRUCTURE ====== */
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
@@ -16,105 +16,103 @@ body {
 
 /* ====== BARRE LATERALE ====== */
 .sidebar {
-  width: 200px;
+  width: 240px;
   background: linear-gradient(180deg, #002a40, #003657);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 25px 20px;
-  border-top-right-radius: 14px;
-  border-bottom-right-radius: 14px;
+  padding: 25px 15px;
   box-shadow: 4px 0 15px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  z-index: 10;
 }
 
-/* ====== Logo + Titre ====== */
+/* ====== Logo ====== */
 .logo-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
 }
 
 .logo {
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   object-fit: contain;
-  border-radius: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.sidebar h2 {
-  font-family: "Orbitron", sans-serif;
-  font-size: 1.5rem;
+/* ====== Date et heure ====== */
+.datetime {
   text-align: center;
   color: #b8d9ff;
-  margin: 0;
-  line-height: 1.3;
-  text-shadow: 0 0 6px #00ffff, 0 0 15px #00bcd4;
+  font-family: "Orbitron", sans-serif;
+  margin-bottom: 30px;
+  text-shadow: 0 0 6px #00ffff, 0 0 12px #00bcd4;
   animation: glow 2s infinite alternate;
 }
 
-@keyframes glow {
-  from { text-shadow: 0 0 6px #00ffff, 0 0 12px #00bcd4; }
-  to { text-shadow: 0 0 15px #00ffff, 0 0 25px #00bcd4; }
+#date {
+  font-size: 1.2rem;
+}
+
+#time {
+  font-size: 1.4rem;
+  font-weight: bold;
 }
 
 /* ====== Navigation ====== */
 .sidebar nav {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
-.sidebar nav ul {
+.sidebar ul {
   list-style: none;
   padding: 0;
   margin: 0;
   width: 100%;
 }
 
-.sidebar nav ul li {
-  margin: 18px 0;
-  width: 100%;
+.sidebar li {
+  margin: 20px 0;
 }
 
-.sidebar nav ul li a {
+.sidebar a {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
+  gap: 15px;
+  padding: 16px 18px;
   text-decoration: none;
   color: #ffffff;
   background: rgba(0, 90, 130, 0.45);
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 14px 18px;
+  border-radius: 14px;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   transition: all 0.3s ease;
   box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.15);
 }
 
-.sidebar nav ul li a:hover {
+.sidebar a:hover {
   background: rgba(0, 140, 200, 0.7);
   border-color: #00ffff;
   transform: translateY(-3px);
-  box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
 }
 
-.sidebar nav ul li a img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
+.sidebar a img {
+  width: 36px;
+  height: 36px;
 }
 
-/* ====== Partie droite ====== */
+/* ====== CONTENU PRINCIPAL ====== */
 .main-content {
   flex: 1;
-  background: url("logosym.png") center/cover no-repeat;
+  background: url("logosym.png") right center no-repeat;
+  background-size: cover;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -125,7 +123,7 @@ body {
 }
 
 .main-content h1 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin-bottom: 15px;
 }
 
@@ -134,65 +132,161 @@ body {
   max-width: 600px;
   text-align: center;
 }
-/* ====== Date & heure ====== */
-.datetime {
-  text-align: center;
-  color: #b8d9ff;
-  font-family: "Orbitron", sans-serif;
-  margin-bottom: 40px;
-  text-shadow: 0 0 6px #00ffff, 0 0 12px #00bcd4;
-  animation: glow 2s infinite alternate;
+
+/* ====== ANIMATION LUMIERE ====== */
+@keyframes glow {
+  from { text-shadow: 0 0 6px #00ffff, 0 0 12px #00bcd4; }
+  to { text-shadow: 0 0 15px #00ffff, 0 0 25px #00bcd4; }
 }
 
-#date {
-  font-size: 1.2rem;
-  margin-bottom: 6px;
+/* ====== RESPONSIVE ====== */
+
+/* TABLETTE (menu plus petit) */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .logo {
+    width: 140px;
+    height: 140px;
+  }
+
+  .sidebar a {
+    font-size: 1rem;
+    padding: 12px 14px;
+  }
+
+  .sidebar a img {
+    width: 30px;
+    height: 30px;
+  }
 }
 
-#time {
-  font-size: 1.4rem;
-  font-weight: 700;
-}
-/* === CAROUSEL PRINCIPAL === */
-.carousel {
-  position: relative;
-  width: 80%;
-  height: 80%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* MOBILE (menu horizontal en bas) */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  .admin-container {
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  /* Barre latérale devient une barre horizontale en bas */
+  .sidebar {
+    width: 100%;
+    height: 90px;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 10px;
+    border-radius: 0;
+    box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .sidebar nav {
+    width: 100%;
+    height: 100%;
+  }
+
+  .sidebar ul {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+  }
+
+  .sidebar li {
+    margin: 0;
+  }
+
+  .sidebar a {
+    flex-direction: column;
+    justify-content: center;
+    font-size: 0.9rem;
+    padding: 6px;
+    border-radius: 10px;
+  }
+
+  .sidebar a img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .datetime,
+  .logo-container {
+    display: none;
+  }
+
+  .main-content {
+    background-position: center;
+    padding: 20px;
+    height: calc(100vh - 90px);
+  }
 }
 
-.slide {
-  position: absolute;
-  width: 100%;
+/* TRES PETITS ECRANS */
+@media (max-width: 420px) {
+  .sidebar a span {
+    display: none; /* garde seulement les icônes si écran très étroit */
+  }
+
+  .sidebar a img {
+    width: 32px;
+    height: 32px;
+  }
+}
+/* === Bouton menu === */
+.menu-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1100;
+  background-color: #012a4a;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  font-size: 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: none;
+}
+
+/* === Sidebar par défaut === */
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 230px;
   height: 100%;
-  opacity: 0;
-  transform: scale(1.05);
-  transition: opacity 1s ease, transform 1s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-color: #012a4a;
+  transition: transform 0.3s ease;
+  z-index: 1000;
 }
 
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.carousel-image {
-  max-width: 80%;
-  max-height: 80%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(0,255,255,0.6));
-}
-#mainContent {
-  transition: opacity 0.6s ease-in-out;
-}
-#mainContent.fade-out {
-  opacity: 0;
-}
-#mainContent.fade-in {
-  opacity: 1;
+/* Cacher le menu sur mobile */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+  #sidebar {
+    transform: translateX(-100%);
+  }
+  #sidebar.active {
+    transform: translateX(0);
+  }
+  #sidebar ul {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 60px 0;
+  }
+  #sidebar ul li {
+    margin: 20px 0;
+  }
 }

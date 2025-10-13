@@ -5,127 +5,171 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Malaw Sécurity - Accueil</title>
 
-  <!-- Font -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
 @font-face {
   font-family: 'Astro Space';
-  src: url('../assets/fonts/AstroSpace-1.otf') format('opentype');
+  src: url('./assets/fonts/AstroSpace-1.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
-    :root {
-      --main-color: #00b7ff;
-      --bg-color: #02060f;
-      --text-color: #ffffff;
-    }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Astro Space','Poppins', sans-serif;
-      background: var(--bg-color);
-      color: var(--text-color);
-    }
+/* --- Variables principales --- */
+:root {
+  --main-color: #00b7ff;
+  --bg-color: #000712;
+  --text-color: #ffffff;
+}
 
-    /*Fond animé en particules */
-    canvas#particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
+/* --- Base --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Astro Space', 'Poppins', sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
 
-    .container {
-      position: relative;
-      z-index: 1;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      background: rgba(0, 0, 0, 0.3);
-    }
+/* --- Fond techno --- */
+#tech-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  background: radial-gradient(circle at 30% 50%, #001a33, #000a14, #00040a);
+}
 
-    .logo {
-      width: 150px;
-      height: 150px;
-      background: url('logoblanc.png') center/contain no-repeat;
-      opacity: 0;
-      transform: scale(0.3);
-      animation: logoIn 2s ease forwards;
-      filter: drop-shadow(0 0 25px rgba(0, 183, 255, 0.6));
-    }
+/* Grille animée */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 183, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 183, 255, 0.15) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: moveGrid 30s linear infinite;
+  z-index: 0;
+}
+@keyframes moveGrid {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 300px 300px, 300px 300px; }
+}
 
-    @keyframes logoIn {
-      0% { opacity: 0; transform: scale(0.3); }
-      60% { opacity: 1; transform: scale(1.1); }
-      100% { opacity: 1; transform: scale(1); }
-    }
+/* Overlay lumineux */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(0, 183, 255, 0.15), rgba(0, 119, 255, 0.05));
+  animation: glowMove 10s ease infinite alternate;
+  z-index: 1;
+}
+@keyframes glowMove {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
 
-    .text {
-      margin-top: 25px;
-      font-size: 1.5rem;
-      font-weight: 600;
-      white-space: pre-line;
-      opacity: 0;
-      animation: fadeIn 0.5s ease forwards 2.2s;
-    }
+/* Canvas particules connectées */
+#tech-particles {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 2;
+}
 
-    @keyframes fadeIn { to { opacity: 1; } }
+/* --- Contenu principal --- */
+.container {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
 
-    .buttons {
-      margin-top: 35px;
-      display: flex;
-      gap: 20px;
-      opacity: 0;
-      animation: fadeIn 0.8s ease forwards 6s;
-    }
+/* Logo animé */
+.logo {
+  width: 150px;
+  height: 150px;
+  background: url('logoblanc.png') center/contain no-repeat;
+  opacity: 0;
+  transform: scale(0.3);
+  animation: logoIn 2s ease forwards;
+  filter: drop-shadow(0 0 25px rgba(0, 183, 255, 0.6));
+}
+@keyframes logoIn {
+  0% { opacity: 0; transform: scale(0.3); }
+  60% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
 
-    button {
-      background: transparent;
-      border: 2px solid var(--main-color);
-      color: var(--text-color);
-      padding: 12px 26px;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      box-shadow: 0 0 8px rgba(0, 183, 255, 0.5);
-    }
+/* Texte tapé */
+.text {
+  margin-top: 25px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  white-space: pre-line;
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards 2.2s;
+}
+@keyframes fadeIn { to { opacity: 1; } }
 
-    button:hover {
-      background: var(--main-color);
-      color: #fff;
-      box-shadow: 0 0 20px var(--main-color);
-      transform: scale(1.05);
-    }
+/* Boutons */
+.buttons {
+  margin-top: 35px;
+  display: flex;
+  gap: 20px;
+  opacity: 0;
+  animation: fadeIn 0.8s ease forwards 6s;
+}
+button {
+  background: transparent;
+  border: 2px solid var(--main-color);
+  color: var(--text-color);
+  padding: 12px 26px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow: 0 0 8px rgba(0, 183, 255, 0.5);
+}
+button:hover {
+  background: var(--main-color);
+  color: #fff;
+  box-shadow: 0 0 20px var(--main-color);
+  transform: scale(1.05);
+}
+button:active {
+  box-shadow: 0 0 40px var(--main-color), 0 0 80px var(--main-color);
+  text-shadow: 0 0 10px #fff;
+  transition: 0.1s;
+}
 
-    button:active {
-      box-shadow: 0 0 40px var(--main-color), 0 0 80px var(--main-color);
-      text-shadow: 0 0 10px #fff;
-      transition: 0.1s;
-    }
-
-    .fade-out {
-      animation: fadeOut 1s forwards;
-    }
-
-    @keyframes fadeOut {
-      to { opacity: 0; transform: scale(0.9); }
-    }
+/* Sortie fondu */
+.fade-out {
+  animation: fadeOut 1s forwards;
+}
+@keyframes fadeOut {
+  to { opacity: 0; transform: scale(0.9); }
+}
   </style>
 </head>
-<body>
-  <canvas id="particles"></canvas>
 
+<body>
+  <!-- FOND TECHNO -->
+  <div id="tech-bg">
+    <div class="grid-bg"></div>
+    <div class="overlay"></div>
+    <canvas id="tech-particles"></canvas>
+  </div>
+
+  <!-- CONTENU -->
   <div class="container">
     <div class="logo"></div>
     <div class="text" id="typedText"></div>
@@ -139,78 +183,97 @@
   <audio id="typeSound" src="https://assets.mixkit.co/sfx/download/mixkit-typewriter-soft-hit-1360.wav" preload="auto"></audio>
 
   <script>
-    /************* Animation texte avec son *************/
-    const textElement = document.getElementById("typedText");
-    const typeSound = document.getElementById("typeSound");
+  /************* Texte tapé avec son *************/
+  const textElement = document.getElementById("typedText");
+  const typeSound = document.getElementById("typeSound");
 
-    const message = "Bienvenue aux organisateurs du Govathon.\nVous voulez explorer le mode utilisateur ou le mode administrateur ?";
-    let index = 0;
+  const message = "Bienvenue aux organisateurs du Gov'athon.\nVous voulez explorer le mode utilisateur ou le mode administrateur ?";
+  let index = 0;
 
-    function typeWriter() {
-      if (index < message.length) {
-        textElement.textContent += message.charAt(index);
-        if (message.charAt(index) !== " " && message.charAt(index) !== "\n") {
-          typeSound.currentTime = 0;
-          typeSound.play();
+  function typeWriter() {
+    if (index < message.length) {
+      textElement.textContent += message.charAt(index);
+      if (message.charAt(index) !== " " && message.charAt(index) !== "\n") {
+        typeSound.currentTime = 0;
+        typeSound.play();
+      }
+      index++;
+      setTimeout(typeWriter, 45);
+    }
+  }
+  setTimeout(typeWriter, 2300);
+
+  /************* Boutons *************/
+  function goTo(mode) {
+    document.body.classList.add("fade-out");
+    setTimeout(() => {
+      if (mode === "admin") window.location.href = "admin/admin.html";
+      else window.location.href = "user.html";
+    }, 1000);
+  }
+
+  /************* Particules connectées *************/
+  const canvas = document.getElementById("tech-particles");
+  const ctx = canvas.getContext("2d");
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  function createParticles() {
+    const colors = ["#00b7ff", "#33ccff", "#0077ff"];
+    for (let i = 0; i < 80; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 1,
+        dx: (Math.random() - 0.5),
+        dy: (Math.random() - 0.5),
+        color: colors[Math.floor(Math.random() * colors.length)]
+      });
+    }
+  }
+
+  function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+
+      p.x += p.dx;
+      p.y += p.dy;
+      if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+    });
+
+    // Lignes de liaison
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.strokeStyle = "rgba(0, 183, 255, 0.2)";
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
         }
-        index++;
-        setTimeout(typeWriter, 45);
       }
     }
-    setTimeout(typeWriter, 2300); // commence après l’animation du logo
 
-    /************* ⚡ Boutons + redirection *************/
-    function goTo(mode) {
-      document.body.classList.add("fade-out");
-      setTimeout(() => {
-        if (mode === "admin") window.location.href = "admin/admin.html";
-        else window.location.href = "user.html";
-      }, 1000);
-    }
+    requestAnimationFrame(drawParticles);
+  }
 
-    /*************Fond particules animé *************/
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    let particles = [];
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
-
-    function createParticles() {
-      const count = 100;
-      for (let i = 0; i < count; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 2 + 1,
-          dx: (Math.random() - 0.5) * 0.8,
-          dy: (Math.random() - 0.5) * 0.8
-        });
-      }
-    }
-    createParticles();
-
-    function drawParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#00b7ff";
-      for (let p of particles) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-        p.x += p.dx;
-        p.y += p.dy;
-
-        // Rebond murs
-        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-      }
-      requestAnimationFrame(drawParticles);
-    }
-    drawParticles();
+  createParticles();
+  drawParticles();
   </script>
 </body>
 </html>

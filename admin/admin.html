@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tableau de bord - Malaw Security</title>
 
-  <!-- Police Orbitron pour effet techno -->
+  <!-- Police Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
   <!-- Fichiers CSS -->
@@ -14,10 +14,12 @@
 </head>
 <body>
 
+  <!-- Bouton menu mobile -->
+  <button class="menu-toggle" id="menuToggle">☰</button>
+
   <div class="admin-container">
     <!-- Barre latérale -->
-    <aside class="sidebar">
-      <!-- Logo -->
+    <aside class="sidebar" id="sidebar">
       <div class="logo-container">
         <img src="logopetit.png" alt="Logo Malaw Security" class="logo">
       </div>
@@ -28,45 +30,26 @@
         <div id="time"></div>
       </div>
 
-      <!-- Navigation -->
       <nav>
         <ul>
-          <li>
-            <a href="heatmap.html">
-              <img src="icons/sn.png" alt="Heatmap Icon">
-              Heatmap
-            </a>
-          </li>
-          <li>
-            <a href="alertes.html">
-              <img src="icons/alert.png" alt="Alertes Icon">
-              Alertes
-            </a>
-          </li>
-          <li>
-            <a href="stats.html">
-              <img src="icons/stats.png" alt="Stats Icon">
-              Stats
-            </a>
-          </li>
+          <li><a href="heatmap.html"><img src="icons/sn.png" alt="Heatmap">Heatmap</a></li>
+          <li><a href="alertes.html"><img src="icons/alert.png" alt="Alertes">Alertes</a></li>
+          <li><a href="stats.html"><img src="icons/stats.png" alt="Stats">Stats</a></li>
         </ul>
       </nav>
     </aside>
 
     <!-- Contenu principal -->
-    <main class="main-content">
+    <main class="main-content" id="mainContent">
       <h1>Bienvenue sur le tableau de bord</h1>
       <p>Sélectionnez une section à gauche pour gérer les données du système.</p>
     </main>
   </div>
 
-  <!-- Script pour afficher la date et l’heure -->
   <script>
+    // === Date & heure ===
     function updateDateTime() {
       const now = new Date();
-      const dateElement = document.getElementById("date");
-      const timeElement = document.getElementById("time");
-
       const jour = String(now.getDate()).padStart(2, "0");
       const mois = String(now.getMonth() + 1).padStart(2, "0");
       const annee = now.getFullYear();
@@ -74,12 +57,18 @@
       const minutes = String(now.getMinutes()).padStart(2, "0");
       const secondes = String(now.getSeconds()).padStart(2, "0");
 
-      dateElement.textContent = `${jour}/${mois}/${annee}`;
-      timeElement.textContent = `${heures}:${minutes}:${secondes}`;
+      document.getElementById("date").textContent = `${jour}/${mois}/${annee}`;
+      document.getElementById("time").textContent = `${heures}:${minutes}:${secondes}`;
     }
-
     setInterval(updateDateTime, 1000);
     updateDateTime();
+
+    // === Menu latéral mobile ===
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.getElementById("sidebar");
+    menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("active");
+    });
   </script>
 
 </body>

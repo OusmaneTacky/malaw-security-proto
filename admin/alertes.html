@@ -1,82 +1,223 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Alertes - Malaw Security</title>
 
-  <!-- Polices et styles partagés -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="admin.css"> 
+  <!-- Police Orbitron -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
 
   <style>
-    .admin-container {
-      display: flex;
-      min-height: 100vh;
-      background-color: #001b2e;
+    /* --- Style global --- */
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background-color: #021b2e;
       color: white;
-      font-family: "Poppins", sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
-    .main-content {
+    .admin-container {
+      display: flex;
       flex: 1;
-      padding: 40px;
-      overflow-x: auto;
+      overflow: hidden;
+    }
+
+    /* --- Barre latérale --- */
+    .sidebar {
+      width: 260px;
+      background-color: #032b47;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 15px;
+      transition: 0.4s;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 100;
+    }
+
+    .sidebar .logo-container {
+      margin-bottom: 20px;
+    }
+
+    .sidebar .logo {
+      width: 100px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .datetime {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #00d9ff;
+      text-shadow: 0 0 6px #00d9ff;
+      font-size: 14px;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+      padding: 0;
+      width: 100%;
+    }
+
+    .sidebar nav li {
+      margin: 10px 0;
+    }
+
+    .sidebar nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      color: white;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .sidebar nav a:hover, .sidebar nav a.active {
+      background: rgba(0, 217, 255, 0.2);
+      box-shadow: 0 0 10px #00d9ff;
+    }
+
+    .sidebar nav img {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* --- Contenu principal --- */
+    .main-content {
+      margin-left: 260px;
+      flex: 1;
+      padding: 30px;
+      transition: margin-left 0.4s;
     }
 
     h1 {
-      font-family: "Orbitron", sans-serif;
-      color: #b8d9ff;
+      color: #00d9ff;
+      text-shadow: 0 0 10px #00d9ff;
+      font-size: 1.8rem;
       margin-bottom: 25px;
       text-align: center;
+    }
+
+    .table-container {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+      text-align: left;
+      font-size: 0.9rem;
     }
 
     th, td {
-      padding: 14px 18px;
-      text-align: left;
+      padding: 12px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     th {
-      background: rgba(0, 90, 130, 0.5);
-      color: #b8d9ff;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      color: #00d9ff;
+      font-weight: 600;
     }
 
-    tr:nth-child(even) {
-      background: rgba(255, 255, 255, 0.04);
+    tr:hover {
+      background: rgba(0, 217, 255, 0.05);
     }
 
-    .status {
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-weight: bold;
-      color: white;
+    /* --- Burger Menu --- */
+    .burger {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 35px;
+      background-color: #00d9ff;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      z-index: 200;
+      box-shadow: 0 0 10px #00d9ff;
     }
 
-    .status.new { background: #2196f3; }
-    .status.pending { background: #ff9800; }
-    .status.resolved { background: #4caf50; }
+    .burger span {
+      display: block;
+      width: 22px;
+      height: 2.5px;
+      background-color: #021b2e;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
 
-    @media (max-width: 768px) {
-      th, td { font-size: 13px; padding: 10px; }
+    .burger.active span:nth-child(1) {
+      transform: rotate(45deg) translateY(8px);
+    }
+
+    .burger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .burger.active span:nth-child(3) {
+      transform: rotate(-45deg) translateY(-8px);
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 850px) {
+      .burger {
+        display: flex;
+      }
+
+      .sidebar {
+        left: -260px;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding-top: 80px;
+      }
+
+      .main-content.active {
+        opacity: 0.5;
+      }
+
+      .sidebar nav a {
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .sidebar nav a img {
+        width: 30px;
+        height: 30px;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="admin-container">
+    <!-- Barre latérale -->
     <aside class="sidebar">
       <div class="logo-container">
         <img src="logopetit.png" alt="Logo Malaw Security" class="logo">
@@ -89,45 +230,53 @@
 
       <nav>
         <ul>
-          <li><a href="admin.html"><img src="icons/sn.png" alt="sn Icon">Accueil</a></li>
-          <li><a href="alertes.html"><img src="icons/alert.png" alt="Alertes Icon">Alertes</a></li>
-          <li><a href="stats.html"><img src="icons/stats.png" alt="Stats Icon">Stats</a></li>
+          <li><a href="heatmap.html"><img src="icons/sn.png" alt="">Heatmap</a></li>
+          <li><a href="alertes.html" class="active"><img src="icons/alert.png" alt="">Alertes</a></li>
+          <li><a href="stats.html"><img src="icons/stats.png" alt="">Stats</a></li>
         </ul>
       </nav>
     </aside>
 
+    <!-- Contenu principal -->
     <main class="main-content">
-      <h1>🚨 Alertes récentes</h1>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Localisation</th>
-            <th>Description</th>
-            <th>Statut</th>
-          </tr>
-        </thead>
-        <tbody id="alertesBody"></tbody>
-      </table>
+      <h1>🚨 Alertes Récentes</h1>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Localisation</th>
+              <th>Description</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody id="alertesBody"></tbody>
+        </table>
+      </div>
     </main>
   </div>
 
-<script>
-  function updateDateTime() {
-    const now = new Date();
-    document.getElementById("date").textContent = now.toLocaleDateString("fr-FR");
-    document.getElementById("time").textContent = now.toLocaleTimeString("fr-FR");
-  }
-  setInterval(updateDateTime, 1000);
-  updateDateTime();
+  <!-- Horloge -->
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      const jour = String(now.getDate()).padStart(2, "0");
+      const mois = String(now.getMonth() + 1).padStart(2, "0");
+      const annee = now.getFullYear();
+      const heures = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const secondes = String(now.getSeconds()).padStart(2, "0");
 
-  const tbody = document.getElementById("alertesBody");
+      document.getElementById("date").textContent = `${jour}/${mois}/${annee}`;
+      document.getElementById("time").textContent = `${heures}:${minutes}:${secondes}`;
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
 
-  // ✅ Liste d’alertes locales
-  const alertesLocales = [
- { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau", categorie: "Phishing" },
-  { date: "09/10/2025 08:14:30", localisation: "Région de Saint-Louis", description: "Faux message d’aide financière diffusé sur WhatsApp", statut: "En cours", categorie: "Escroquerie" },
+  <!-- Remplissage du tableau -->
+  <script>
+    const alertes = [
   { date: "09/10/2025 09:05:12", localisation: "Région de Dakar", description: "Lien frauduleux promettant un bonus Wave", statut: "Résolu", categorie: "Spam SMS" },
   { date: "08/10/2025", localisation: "Région de Dakar", description: "Tentative de phishing via message Wave 'Compte suspendu'", statut: "En cours", categorie: "Phishing" },
   { date: "08/10/2025", localisation: "Région de Thiès", description: "Faux concours ‘Gagnez un iPhone 17 Pro’ sur WhatsApp", statut: "Nouveau", categorie: "Escroquerie" },
@@ -197,76 +346,57 @@
   { date: "09/10/2025 22:02:32", localisation: "Région de Saint-Louis", description: "Spam SMS annonçant un gain fictif d’un concours Wave", statut: "Résolu", categorie: "Spam SMS" },
   { date: "09/10/2025 22:25:44", localisation: "Région de Dakar", description: "Tentative de piratage sur le réseau Wi-Fi public", statut: "Nouveau", categorie: "Intrusion" },
   { date: "09/10/2025 22:46:09", localisation: "Région de Saint-Louis", description: "Faux mail de remboursement PayPal détecté", statut: "En cours", categorie: "Phishing" },
-  { date: "09/10/2025 23:05:23", localisation: "Région de Dakar", description: "Fausse publicité promettant des prêts instantanés", statut: "Résolu", categorie: "Escroquerie" }
-  ];
+  { date: "09/10/2025 23:05:23", localisation: "Région de Dakar", description: "Fausse publicité promettant des prêts instantanés", statut: "Résolu", categorie: "Escroquerie" },
+  { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau" },
+  { date: "09/10/2025 08:14:30", localisation: "Région de Saint-Louis", description: "Faux message d’aide financière diffusé sur WhatsApp", statut: "En cours" },
+  { date: "09/10/2025 09:05:12", localisation: "Région de Dakar", description: "Lien frauduleux promettant un bonus Wave", statut: "Résolu" },
+  { date: "09/10/2025 08:12:45", localisation: "Région de Dakar", description: "Tentative de vol de données bancaires via faux lien Orange Money", statut: "Nouveau", categorie: "Phishing" },
+  { date: "09/10/2025 08:14:30", localisation: "Région de Saint-Louis", description: "Faux message d’aide financière diffusé sur WhatsApp", statut: "En cours", categorie: "Escroquerie" },
+ 
+];
 
-  function getStatusClass(statut) {
-    switch (statut.toLowerCase()) {
-      case "en cours": return "pending";
-      case "résolu": return "resolved";
-      case "nouveau": return "new";
-      default: return "new";
+    function getStatusColor(statut) {
+      switch (statut.toLowerCase()) {
+        case "nouveau": return "#2196f3";
+        case "en cours": return "#ff9800";
+        case "résolu": return "#4caf50";
+        default: return "#999";
+      }
     }
-  }
 
-  function afficherAlertes(liste) {
-    tbody.innerHTML = "";
-    liste.forEach(a => {
+    const tbody = document.getElementById("alertesBody");
+    alertes.forEach(a => {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${a.date}</td>
         <td>${a.localisation}</td>
         <td>${a.description}</td>
-        <td><span class="status ${getStatusClass(a.statut)}">${a.statut}</span></td>
-      `;
+        <td><span style="
+          background:${getStatusColor(a.statut)};
+          padding:6px 12px;
+          border-radius:8px;
+          color:white;
+          font-weight:600;
+        ">${a.statut}</span></td>`;
       tbody.appendChild(row);
     });
-  }
+  </script>
 
-  async function chargerAlertes() {
-    try {
-      // 1️⃣ Récupération depuis le localStorage
-      let alertes = JSON.parse(localStorage.getItem("alertes")) || [];
+  <!-- Menu burger -->
+  <script>
+    const burger = document.createElement("div");
+    burger.classList.add("burger");
+    burger.innerHTML = "<span></span><span></span><span></span>";
+    document.body.appendChild(burger);
 
-      // 2️⃣ Chargement du fichier alertes.json (facultatif)
-      try {
-        const response = await fetch("alertes.json");
-        if (response.ok) {
-          const data = await response.json();
-          alertes = [...alertes, ...data];
-        }
-      } catch {
-        console.warn("Aucun fichier alertes.json trouvé (pas bloquant)");
-      }
+    const sidebar = document.querySelector(".sidebar");
+    const main = document.querySelector(".main-content");
 
-      // 3️⃣ Fusion avec les alertes locales
-      alertes = [...alertes, ...alertesLocales];
-
-      // 4️⃣ Suppression des doublons
-      const uniques = alertes.filter(
-        (a, i, self) =>
-          i === self.findIndex(b => b.date === a.date && b.description === a.description)
-      );
-
-      // 5️⃣ Tri par date décroissante
-      uniques.sort((a, b) =>
-        new Date(b.date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3")) -
-        new Date(a.date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3"))
-      );
-
-      // 6️⃣ Sauvegarde
-      localStorage.setItem("alertes", JSON.stringify(uniques));
-
-      // 7️⃣ Affichage
-      afficherAlertes(uniques);
-    } catch (error) {
-      console.error("Erreur :", error);
-      afficherAlertes(alertesLocales);
-    }
-  }
-
-  chargerAlertes();
-</script>
-
+    burger.addEventListener("click", () => {
+      burger.classList.toggle("active");
+      sidebar.classList.toggle("active");
+      main.classList.toggle("active");
+    });
+  </script>
 </body>
 </html>

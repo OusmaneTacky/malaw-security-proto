@@ -5,15 +5,223 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tableau de bord - Malaw Security</title>
 
-  <!-- Police Orbitron -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- Fichiers CSS -->
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="admin.css">
+  <style>
+    /* === STYLE GLOBAL === */
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      height: 100vh;
+      display: flex;
+      background-color: #001b2e;
+      overflow: hidden;
+    }
+
+    .admin-container {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+    }
+
+    /* === BOUTON MENU MOBILE === */
+    .menu-toggle {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background-color: #00c853;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      font-size: 22px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+      box-shadow: 0 0 10px rgba(0, 200, 83, 0.6);
+      transition: background 0.3s ease;
+    }
+    .menu-toggle:hover {
+      background-color: #00e676;
+    }
+
+    /* === BARRE LATÉRALE === */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100%;
+      background: linear-gradient(180deg, #002a40, #003657);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 25px 15px;
+      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo {
+      width: 140px;
+      height: 140px;
+      object-fit: contain;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.4));
+    }
+
+    /* === DATE & HEURE === */
+    .datetime {
+      text-align: center;
+      color: #b8d9ff;
+      font-family: "Orbitron", sans-serif;
+      margin-bottom: 25px;
+      text-shadow: 0 0 6px #00ffff, 0 0 12px #00bcd4;
+      animation: glow 2s infinite alternate;
+    }
+    #date { font-size: 1.1rem; }
+    #time { font-size: 1.3rem; font-weight: bold; }
+
+    /* === NAVIGATION === */
+    .sidebar nav {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+    }
+    .sidebar li { margin: 18px 0; }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: #ffffff;
+      background: rgba(0, 90, 130, 0.45);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.15);
+    }
+    .sidebar a:hover {
+      background: rgba(0, 140, 200, 0.7);
+      border-color: #00ffff;
+      transform: translateY(-3px);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    }
+    .sidebar a img {
+      width: 30px;
+      height: 30px;
+    }
+
+    /* === CONTENU PRINCIPAL === */
+    .main-content {
+      flex: 1;
+      margin-left: 240px;
+      background: url("logosym.png") center center no-repeat;
+      background-size: contain;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      transition: margin-left 0.3s ease;
+    }
+    .main-content h1 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+    .main-content p {
+      font-size: 1rem;
+      max-width: 90%;
+    }
+
+    /* === ANIMATION LUMIÈRE === */
+    @keyframes glow {
+      from { text-shadow: 0 0 6px #00ffff, 0 0 12px #00bcd4; }
+      to { text-shadow: 0 0 15px #00ffff, 0 0 25px #00bcd4; }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 900px) {
+      .menu-toggle { display: block; }
+      .sidebar {
+        transform: translateX(-100%);
+        width: 220px;
+      }
+      .sidebar.active { transform: translateX(0); }
+      .main-content {
+        margin-left: 0;
+        background-size: 70%;
+      }
+      .logo {
+        width: 120px;
+        height: 120px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .main-content {
+        background-size: 65%;
+        padding: 20px;
+      }
+      .main-content h1 {
+        font-size: 1.5rem;
+      }
+      .main-content p {
+        font-size: 0.95rem;
+      }
+      .sidebar a span {
+        display: inline;
+        font-size: 0.9rem;
+      }
+      .sidebar a img {
+        width: 26px;
+        height: 26px;
+      }
+    }
+@media (max-width: 450px) {
+  .sidebar a span {
+    display: inline;
+    font-size: 0.8rem;
+  }
+  .sidebar a {
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .sidebar a img {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+  </style>
 </head>
-<body>
 
+<body>
   <!-- Bouton menu mobile -->
   <button class="menu-toggle" id="menuToggle">☰</button>
 
@@ -32,9 +240,9 @@
 
       <nav>
         <ul>
-          <li><a href="heatmap.html"><img src="icons/sn.png" alt="Heatmap">Heatmap</a></li>
-          <li><a href="alertes.html"><img src="icons/alert.png" alt="Alertes">Alertes</a></li>
-          <li><a href="stats.html"><img src="icons/stats.png" alt="Stats">Stats</a></li>
+          <li><a href="heatmap.html"><img src="icons/sn.png" alt="Heatmap"><span>Heatmap</span></a></li>
+          <li><a href="alertes.html"><img src="icons/alert.png" alt="Alertes"><span>Alertes</span></a></li>
+          <li><a href="stats.html"><img src="icons/stats.png" alt="Stats"><span>Stats</span></a></li>
         </ul>
       </nav>
     </aside>
@@ -56,20 +264,18 @@
       const heures = String(now.getHours()).padStart(2, "0");
       const minutes = String(now.getMinutes()).padStart(2, "0");
       const secondes = String(now.getSeconds()).padStart(2, "0");
-
       document.getElementById("date").textContent = `${jour}/${mois}/${annee}`;
       document.getElementById("time").textContent = `${heures}:${minutes}:${secondes}`;
     }
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    // === Menu latéral mobile ===
+    // === Menu mobile ===
     const menuToggle = document.getElementById("menuToggle");
     const sidebar = document.getElementById("sidebar");
     menuToggle.addEventListener("click", () => {
       sidebar.classList.toggle("active");
     });
   </script>
-
 </body>
 </html>

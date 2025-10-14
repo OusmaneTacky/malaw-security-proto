@@ -3,19 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Malaw Sécurity - Accueil</title>
+  <title>Malaw Sécurity - Présentation</title>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Monomaniac+One&display=swap" rel="stylesheet">
 
   <style>
-@font-face {
-  font-family: 'Astro Space';
-  src: url('./assets/fonts/AstroSpace-1.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-}
-
 /* --- Variables principales --- */
 :root {
   --main-color: #00b7ff;
@@ -29,12 +22,12 @@ html, body {
   padding: 0;
   height: 100%;
   overflow: hidden;
-  font-family: 'Astro Space', 'Poppins', sans-serif;
   background: var(--bg-color);
   color: var(--text-color);
+  font-family: 'Monomaniac One', sans-serif;
 }
 
-/* --- Fond techno --- */
+/* === FOND TECHNO ANIMÉ === */
 #tech-bg {
   position: fixed;
   inset: 0;
@@ -43,7 +36,6 @@ html, body {
   background: radial-gradient(circle at 30% 50%, #001a33, #000a14, #00040a);
 }
 
-/* Grille animée */
 .grid-bg {
   position: absolute;
   inset: 0;
@@ -52,50 +44,330 @@ html, body {
     linear-gradient(90deg, rgba(0, 183, 255, 0.15) 1px, transparent 1px);
   background-size: 60px 60px;
   animation: moveGrid 30s linear infinite;
-  z-index: 0;
 }
 @keyframes moveGrid {
   from { background-position: 0 0, 0 0; }
   to { background-position: 300px 300px, 300px 300px; }
 }
 
-/* Overlay lumineux */
 .overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(120deg, rgba(0, 183, 255, 0.15), rgba(0, 119, 255, 0.05));
   animation: glowMove 10s ease infinite alternate;
-  z-index: 1;
 }
 @keyframes glowMove {
   from { background-position: 0% 50%; }
   to { background-position: 100% 50%; }
 }
 
-/* Canvas particules connectées */
-#tech-particles {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 2;
+/* === INTRO === */
+#intro-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  color: var(--text-color);
+  transition: opacity 1s ease;
+}
+/* --- INTRO RESPONSIVE --- */
+
+/* Image + texte alignés proprement */
+.intro-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-/* --- Contenu principal --- */
+.intro-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.intro-img {
+  width: 90%;
+  max-width: 400px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Typo */
+.intro-line {
+  font-size: clamp(1.2rem, 2vw, 2.4rem);
+  font-weight: 600;
+  color: var(--text-color);
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+}
+
+#intro-present {
+  font-size: clamp(1rem, 1.5vw, 1.6rem);
+  color: var(--accent-color, #00c8ff);
+  margin-top: 0.5rem;
+}
+
+/* ======= Responsive breakpoints ======= */
+
+/* Tablettes */
+@media (max-width: 900px) {
+  #intro-screen {
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .intro-left, .intro-right {
+    flex: unset;
+    width: 100%;
+  }
+
+  .intro-right {
+    margin-top: 1rem;
+  }
+
+  .intro-img {
+    width: 70%;
+    max-width: 280px;
+  }
+}
+
+/* Smartphones */
+@media (max-width: 500px) {
+  .intro-line {
+    font-size: 1.2rem;
+  }
+
+  #intro-present {
+    font-size: 1rem;
+  }
+
+  .intro-img {
+    width: 65%;
+    max-width: 220px;
+  }
+
+  #intro-screen {
+    padding: 1rem;
+  }
+}
+
+.intro-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.intro-line {
+  font-size: 2rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(0,183,255,0.6);
+}
+
+#intro-present {
+  margin-top: 1.8rem;
+  font-size: 2.3rem;
+  opacity: 0;
+  color: #00c8ff;
+  text-shadow: 0 0 20px #00b7ff;
+  animation: appearZoom 1.2s ease forwards;
+  animation-delay: 7s;
+}
+
+.intro-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.intro-img {
+  max-width: 90%;
+  height: auto;
+  filter: drop-shadow(0 0 25px rgba(0,183,255,0.5));
+  animation: fadeInImg 1.5s ease forwards;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+@keyframes fadeInImg {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+.intro-line {
+  font-size: 2rem;
+  letter-spacing: 1px;
+  white-space: pre;
+  text-shadow: 0 0 10px rgba(0,183,255,0.5);
+}
+
+#intro-present {
+  margin-top: 2.5rem;
+  font-size: 2.5rem;
+  opacity: 0;
+  color: #00c8ff;
+  text-shadow: 0 0 20px #00b7ff;
+  animation: appearZoom 1.2s ease forwards;
+  animation-delay: 7s; /* 7 secondes après */
+}
+
+@keyframes appearZoom {
+  0% { opacity: 0; transform: scale(0.6); }
+  100% { opacity: 1; transform: scale(1); }
+}
+/* === INTRO RESPONSIVE === */
+/* === INTRO RESPONSIVE === */
+#intro-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  color: var(--text-color);
+  transition: opacity 1s ease;
+  flex-wrap: wrap;
+}
+
+/* Bloc texte */
+.intro-left {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+/* Bloc image */
+.intro-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.intro-img {
+  width: 85%;
+  max-width: 380px;
+  height: auto;
+  object-fit: contain;
+  animation: fadeInImg 1.5s ease forwards;
+  opacity: 0;
+  filter: drop-shadow(0 0 25px rgba(0,183,255,0.5));
+}
+
+/* Texte animé tapé */
+.intro-line {
+  font-size: clamp(1rem, 2vw + 0.4rem, 2.2rem);
+  letter-spacing: 1px;
+  line-height: 1.3;
+  color: var(--text-color);
+  text-shadow: 0 0 10px rgba(0,183,255,0.4);
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal; /* ✅ texte revient à la ligne */
+  max-width: 95%; /* ✅ empêche le débordement horizontal */
+  margin: 0 auto; /* centré */
+}
+
+#intro-present {
+  margin-top: 1rem;
+  font-size: clamp(0.9rem, 1.6vw + 0.3rem, 1.8rem);
+  color: #00c8ff;
+  text-shadow: 0 0 20px #00b7ff;
+  opacity: 0;
+  animation: appearZoom 1.2s ease forwards;
+  animation-delay: 7s;
+}
+
+/* Animations */
+@keyframes fadeInImg {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes appearZoom {
+  0% { opacity: 0; transform: scale(0.6); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Tablettes */
+@media (max-width: 900px) {
+  #intro-screen {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .intro-left, .intro-right {
+    width: 100%;
+  }
+  .intro-right {
+    margin-top: 1rem;
+  }
+  .intro-img {
+    width: 70%;
+    max-width: 280px;
+  }
+  .intro-line {
+    font-size: clamp(1rem, 4vw, 1.6rem);
+  }
+  #intro-present {
+    font-size: clamp(0.9rem, 3vw, 1.4rem);
+  }
+}
+
+/* Smartphones */
+@media (max-width: 500px) {
+  .intro-line {
+    font-size: clamp(1.9rem, 5vw, 1.2rem);
+    line-height: 1.4;
+  }
+  #intro-present {
+    font-size: clamp(1.8rem, 4vw, 1.1rem);
+  }
+  .intro-img {
+    width: 65%;
+    max-width: 220px;
+  }
+  #intro-screen {
+    padding: 1rem;
+  }
+}
+
+
+/* === CONTENU PRINCIPAL === */
 .container {
   position: relative;
   z-index: 3;
   height: 100%;
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
 }
 
-/* Logo animé */
+/* Logo */
 .logo {
-  width: 150px;
-  height: 150px;
+  width: 300px;
+  height: 300px;
   background: url('logoblanc.png') center/contain no-repeat;
   opacity: 0;
   transform: scale(0.3);
@@ -111,7 +383,7 @@ html, body {
 /* Texte tapé */
 .text {
   margin-top: 25px;
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: 600;
   white-space: pre-line;
   opacity: 0;
@@ -153,10 +425,9 @@ button:active {
 
 /* Sortie fondu */
 .fade-out {
-  animation: fadeOut 1s forwards;
-}
-@keyframes fadeOut {
-  to { opacity: 0; transform: scale(0.9); }
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 1s ease, transform 1s ease;
 }
   </style>
 </head>
@@ -169,9 +440,22 @@ button:active {
     <canvas id="tech-particles"></canvas>
   </div>
 
+<!-- INTRO -->
+<div id="intro-screen">
+  <div class="intro-left">
+    <div class="intro-line" id="intro-name"></div>
+    <div class="intro-line" id="intro-profile"></div>
+    <div id="intro-present">présente</div>
+  </div>
+  <div class="intro-right">
+    <img src="logooff.png" alt="Hacker silhouette" class="intro-img">
+  </div>
+</div>
+
+
   <!-- CONTENU -->
-  <div class="container">
-    <div class="logo"></div>
+  <div class="container" id="main-content">
+<div class="logo"></div>
     <div class="text" id="typedText"></div>
 
     <div class="buttons">
@@ -183,27 +467,67 @@ button:active {
   <audio id="typeSound" src="https://assets.mixkit.co/sfx/download/mixkit-typewriter-soft-hit-1360.wav" preload="auto"></audio>
 
   <script>
-  /************* Texte tapé avec son *************/
-  const textElement = document.getElementById("typedText");
+  /********** INTRO **********/
+  const nameText = "NOM: ANSOUMANA NDIAYE DIT OUSMANE TACKY";
+  const profileText = "PROFIL: PORTEUR DE PROJET (INDIVIDUEL)";
+  const nameEl = document.getElementById("intro-name");
+  const profileEl = document.getElementById("intro-profile");
   const typeSound = document.getElementById("typeSound");
+
+  function typeLine(el, text, delay = 0, speed = 60, callback) {
+    let i = 0;
+    setTimeout(function write() {
+      if (i < text.length) {
+        el.textContent += text.charAt(i);
+        if (text.charAt(i) !== " ") {
+          typeSound.currentTime = 0;
+          typeSound.play();
+        }
+        i++;
+        setTimeout(write, speed);
+      } else if (callback) callback();
+    }, delay);
+  }
+
+  typeLine(nameEl, nameText, 500, 60, () => {
+    typeLine(profileEl, profileText, 400, 55, () => {
+      setTimeout(() => {
+        document.getElementById("intro-screen").classList.add("fade-out");
+        setTimeout(() => {
+          document.getElementById("intro-screen").style.display = "none";
+          showMain();
+        }, 1000);
+      }, 8000);
+    });
+  });
+
+  /********** CONTENU PRINCIPAL **********/
+/********** CONTENU PRINCIPAL **********/
+function showMain() {
+  const container = document.getElementById("main-content");
+  const textEl = document.getElementById("typedText");
+  container.style.display = "flex";
 
   const message = "Bienvenue aux organisateurs du Gov'athon.\nVous voulez explorer le mode utilisateur ou le mode administrateur ?";
   let index = 0;
 
   function typeWriter() {
     if (index < message.length) {
-      textElement.textContent += message.charAt(index);
+      textEl.textContent += message.charAt(index);
       if (message.charAt(index) !== " " && message.charAt(index) !== "\n") {
         typeSound.currentTime = 0;
         typeSound.play();
       }
       index++;
-      setTimeout(typeWriter, 45);
+      setTimeout(typeWriter, 55);
     }
   }
-  setTimeout(typeWriter, 2300);
 
-  /************* Boutons *************/
+  setTimeout(typeWriter, 2300);
+}
+
+
+  /********** BOUTONS **********/
   function goTo(mode) {
     document.body.classList.add("fade-out");
     setTimeout(() => {
@@ -212,7 +536,7 @@ button:active {
     }, 1000);
   }
 
-  /************* Particules connectées *************/
+  /********** PARTICULES CONNECTÉES **********/
   const canvas = document.getElementById("tech-particles");
   const ctx = canvas.getContext("2d");
   let particles = [];
@@ -245,14 +569,11 @@ button:active {
       ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
       ctx.fillStyle = p.color;
       ctx.fill();
-
-      p.x += p.dx;
-      p.y += p.dy;
+      p.x += p.dx; p.y += p.dy;
       if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
       if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
     });
 
-    // Lignes de liaison
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
         const dx = particles[i].x - particles[j].x;
@@ -268,11 +589,10 @@ button:active {
         }
       }
     }
-
     requestAnimationFrame(drawParticles);
   }
 
-  createParticles();
+ createParticles();
   drawParticles();
   </script>
 </body>

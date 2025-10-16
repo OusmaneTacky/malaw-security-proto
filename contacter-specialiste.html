@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contacter un Spécialiste</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'Roboto', sans-serif; }
+
+    body {
+      background: linear-gradient(180deg, #f6fbfd 0%, #e9f3f6 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 16px;
+    }
+
+    /* ===== Cadre principal ===== */
+    .phone-frame {
+      background: linear-gradient(180deg, #cfe0e6 0%, #dbe9ef 100%);
+      border-radius: 36px;
+      box-shadow: 0 18px 40px rgba(17,30,39,0.12),
+                  inset 0 -6px 10px rgba(255,255,255,0.6);
+      border: 6px solid rgba(0,0,0,0.15);
+      overflow: hidden;
+      width: 320px;
+      height: 580px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 22px 18px;
+      position: relative;
+      transition: transform .2s ease-in-out;
+    }
+    .phone-frame:hover { transform: scale(0.92); }
+
+    /* ===== Menu bouton ===== */
+    .menu-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 20;
+    }
+    .menu-btn div {
+      width: 28px;
+      height: 3px;
+      background: #14202A;
+      margin: 5px 0;
+      border-radius: 3px;
+      transition: 0.4s;
+    }
+
+    /* ===== Side menu ===== */
+    .side-menu {
+      position: absolute;
+      top: 0;
+      left: -230px;
+      width: 230px;
+      height: 100%;
+      background: linear-gradient(180deg,#1a2634,#27384a);
+      box-shadow: 4px 0 18px rgba(0,0,0,0.25);
+      padding-top: 20px;
+      transition: left 0.35s ease;
+      border-radius: 0 16px 16px 0;
+      overflow: hidden;
+      z-index: 18;
+    }
+    .side-menu.active { left: 0; }
+
+    .side-menu .menu-logo { text-align: center; margin-bottom: 20px; }
+    .side-menu .menu-logo img { width: 100px; opacity: 0.9; display:block; margin: 0 auto; }
+    .side-menu a {
+      display: block;
+      color: white;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: background 0.18s ease, transform 0.12s ease;
+    }
+    .side-menu a:hover { background: rgba(255,255,255,0.06); transform: translateX(3px); }
+
+    /* ===== Logo ===== */
+    .logo { display:flex; justify-content:center; align-items:center; margin-top: 18px; }
+    .logo-image { width: 150px; max-width: 70%; height: auto; opacity: 0.95; }
+
+    /* ===== Titre ===== */
+    h2 {
+      font-family: 'Merriweather', serif;
+      font-size: 22px;
+      margin-top: 12px;
+      margin-bottom: 10px;
+      color: rgba(20,30,34,0.9);
+      text-align: center;
+      word-wrap: break-word;
+    }
+
+    /* ===== Input et textarea ===== */
+    input[type="text"], textarea {
+      width: 88%;
+      background: rgba(255,255,255,0.95);
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,0.06);
+      padding: 14px 16px;
+      font-size: 15px;
+      color: #333;
+      box-shadow: 0 6px 14px rgba(10,20,30,0.06);
+      outline: none;
+      margin-top: 12px;
+      transition: box-shadow .12s ease;
+    }
+    input:focus, textarea:focus { box-shadow: 0 8px 18px rgba(30,60,90,0.08); }
+    textarea { min-height: 120px; resize: none; }
+
+    /* ===== Bouton vert ===== */
+    .send-btn {
+      margin-top: 20px;
+      width: 82%;
+      background: linear-gradient(180deg,#49b04a,#3c9f3a);
+      border: none;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+      border-radius: 14px;
+      padding: 12px 18px;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(60,159,58,0.18);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .send-btn:hover { transform: translateY(-3px); }
+    .send-btn:active { transform: translateY(-1px) scale(.998); }
+
+    /* ===== Résultat ===== */
+    .result-box {
+      width: 86%;
+      margin-top: 18px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.06);
+      padding: 12px 14px;
+      font-size: 14px;
+      color: #222;
+      min-height: 60px;
+      box-shadow: 0 6px 14px rgba(10,20,30,0.05);
+      display: none;
+      text-align: center;
+    }
+
+    @media (max-width: 360px) {
+      .phone-frame { width: 300px; height: 560px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone-frame">
+    <!-- Bouton menu -->
+    <button class="menu-btn" onclick="toggleMenu()">
+      <div></div><div></div><div></div>
+    </button>
+
+    <!-- Menu latéral -->
+    <div class="side-menu" id="sideMenu">
+      <div class="menu-logo"><img src="logoblanc.png" alt="Logo Malaw Security"></div>
+       <a href="user.html">🏠 Accueil</a>
+       <a href="scan.html">📱 Scanner SMS</a>
+      <a href="report.html">🚨 Signalement</a>
+      <a href="contacter-specialiste.html">🎓 Contacter un Spécialiste</a>
+      <a href="malawbot.html">🤖 MalawBot</a>
+      <a href="quiz.html">🧠 Quiz</a>
+    </div>
+
+    <!-- Logo -->
+    <div class="logo">
+      <img src="logo.png" alt="Logo" class="logo-image">
+    </div>
+
+    <!-- Titre -->
+    <h2>Contacter un Spécialiste</h2>
+
+    <!-- Formulaire -->
+    <input type="text" id="subject" placeholder="Sujet de la requête"> 
+    <textarea id="message" rows="4" placeholder="Décrivez votre problème..."></textarea>
+    <button class="send-btn" id="sendBtn" onclick="envoyerRequete()">Envoyer</button>
+
+    <!-- Résultat -->
+    <div class="result-box" id="resultBox"></div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById("sideMenu").classList.toggle("active");
+    }
+
+    function envoyerRequete() {
+      const subject = document.getElementById("subject").value.trim();
+      const message = document.getElementById("message").value.trim();
+      const resultBox = document.getElementById("resultBox");
+
+      if (subject === "" || message === "") {
+        alert("Veuillez remplir le sujet et le message avant d’envoyer.");
+        return;
+      }
+
+      resultBox.style.display = "block";
+      resultBox.textContent = "✅ Requête envoyée, réponse souvent en moins de 1 minute...";
+
+      setTimeout(() => {
+        resultBox.textContent = "👨🏽‍💻 Ndiaye a pris en charge votre requête.";
+      }, 5000);
+    }
+  </script>
+
+</body>
+</html>
